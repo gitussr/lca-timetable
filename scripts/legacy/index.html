@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Class timetable for Learn Computer Academy">
+  <meta name="theme-color" content="#5b6eff">
+  <link rel="icon" type="image/x-icon"
+    href="https://res.cloudinary.com/learncomputeracademy/image/upload/w_80,c_fill,ar_1:1,g_auto,r_max/v1701951354/learncomputer.in/12_plqchp.png">
+  <title>LCA Class Timetable</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="./styles.css?version=3.0.3">
+</head>
+
+<body>
+
+  <!-- ============ LOGIN GATE ============ -->
+  <div id="loginScreen" class="login-screen">
+    <div class="login-noise"></div>
+    <div class="login-card">
+      <div class="login-mark">
+        <img src="https://www.google.com/s2/favicons?sz=64&domain_url=learncomputer.in" alt="LCA">
+      </div>
+      <h1 class="login-title">Learn Computer Academy</h1>
+      <p class="login-sub">Enter the access code to view today's timetable</p>
+
+      <form id="loginForm" autocomplete="off">
+        <div class="field">
+          <label for="passwordInput">Access code</label>
+          <div class="input-wrap">
+            <input type="password" id="passwordInput" placeholder="••••••••" inputmode="numeric" autocomplete="off" required>
+            <button type="button" id="togglePw" class="pw-toggle" aria-label="Show password">
+              <i class="bi bi-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <label class="remember">
+          <input type="checkbox" id="rememberMe">
+          <span class="checkbox-box"><i class="bi bi-check"></i></span>
+          Remember me on this device
+        </label>
+
+        <button type="submit" class="login-btn">
+          Unlock timetable
+          <i class="bi bi-arrow-right"></i>
+        </button>
+
+        <p id="loginError" class="login-error">Incorrect code. Try again.</p>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============ APP ============ -->
+  <div id="app" class="app-hidden">
+
+    <!-- Theme Toggle Button -->
+    <div class="theme-switcher">
+      <button id="themeToggle" aria-label="Change theme"><i class="bi bi-palette"></i></button>
+
+      <div class="theme-panel" id="themePanel">
+        <h4>Theme</h4>
+        <button data-theme="theme1"><span class="swatch" data-swatch="theme1"></span>Midnight Pro</button>
+        <button data-theme="theme2"><span class="swatch" data-swatch="theme2"></span>Violet Glass</button>
+        <button data-theme="theme3"><span class="swatch" data-swatch="theme3"></span>Deep Ocean</button>
+        <button data-theme="theme4"><span class="swatch" data-swatch="theme4"></span>Cyber Lime</button>
+        <button data-theme="theme5"><span class="swatch" data-swatch="theme5"></span>Graphite Ember</button>
+        <div class="theme-panel-divider"></div>
+        <button id="logoutBtn" class="logout-btn"><i class="bi bi-box-arrow-right"></i> Lock screen</button>
+      </div>
+    </div>
+
+    <header>
+      <div id="today" class="text-sm font-medium"></div>
+      <a href="https://learncomputer.in/" target="_blank" class="brand-link">
+        <img src="https://www.google.com/s2/favicons?sz=32&domain_url=learncomputer.in" alt=""> Learn
+        Computer Academy</a>
+      <div class="flex items-center gap-6">
+        <span id="empty-seats" class="text-sm font-medium"></span>
+        <div id="time" class="text-sm font-medium flex items-center gap-2"></div>
+      </div>
+    </header>
+
+    <section class="timetable">
+      <div class="header-row">Days</div>
+      <div class="header-row"><span class="slot-time">10:30</span><span class="slot-sep">–</span><span class="slot-time">12:30</span></div>
+      <div class="header-row"><span class="slot-time">12:30</span><span class="slot-sep">–</span><span class="slot-time">02:30</span></div>
+      <div class="header-row"><span class="slot-time">04:00</span><span class="slot-sep">–</span><span class="slot-time">06:00</span></div>
+      <div class="header-row"><span class="slot-time">06:00</span><span class="slot-sep">–</span><span class="slot-time">08:00</span></div>
+
+      <div class="day">Mon</div>
+      <div class="slot">
+        <ul>
+          <li>Anish Gharami</li>
+          <li>Soumik Dutta</li>
+          <li class="laptop">Anushka Das</li>
+          <li></li>
+          <li></li>
+        </ul>
+      </div>
+      <div class="slot">
+        <ul>
+          <li class="mouse">Sabita Mondal</li>
+          <li>Surajit Paul</li>
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
+      </div>
+      <div class="slot">
+        <ul>
+          <li>Somen Biswas</li>
+          <li class="mouse">Arnab Roy (5:30pm)</li>
+          <li class="mouse">Debagnik Dey (5pm)</li>
+          <li></li>
+          <li></li>
+        </ul>
+      </div>
+      <div class="slot">
+        <ul>
+          <li class="mouse">Samrit Paul</li>
+          <li class="mouse">Indrani Debnath</li>
+          <li class="mouse">Bihan Kundu (5pm)</li>
+          <li></li>
+          <li></li>
+        </ul>
+      </div>
+      <!-- TUE -->
+      <div class="day">Tue</div>
+      <div class="slot">
+        <ul>
+          <li>Subhashish Raha</li>
+          <li class="laptop">Anushka Das</li>
+          <li></li>
+          <li></li>
+        </ul>
+      </div>
+      <div class="slot">
+        <ul>
+          <li class="mouse">Sabita Mondal</li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
+      </div>
+      <div class="slot">
+        <ul>
+          <li class="mouse">Arnab Roy (5pm)</li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
+      </div>
+      <div class="slot">
+        <ul>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
+      </div>
+      <!-- WED -->
+      <div class="day">Wed</div>
+      <div class="slot">
+        <ul>
+          <li>Anish Gharami</li>
+          <li>Soumik Dutta</li>
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
+      </div>
+      <div class="slot">
+        <ul>
+          <li class="mouse">Sabita Mondal</li>
+          <li>Surajit Paul</li>
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
+      </div>
+      <div class="slot">
+        <ul>
+          <li>Somen Biswas</li>
+          <li class="mouse">Rupanjana Roy (5pm)</li>
+          <li class="mouse">Unnayan Deb</li>
+          <li></li>
+          <li></li>
+        </ul>
+      </div>
+      <div class="slot">
+        <ul>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
+      </div>
+      <!-- THU -->
+      <div class="day">Thu</div>
+      <div class="slot">
+        <ul>
+          <li>Subhashish Raha</li>
+          <li class="mouse">Diya Das</li>
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
+      </div>
+      <div class="slot">
+        <ul>
+          <li class="mouse">Sabita Mondal</li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
+      </div>
+      <div class="slot">
+        <ul>
+          <li class="mouse">Bihan Kundu (5pm)</li>
+          <li class="mouse">Rupanjana Roy (5pm)</li>
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
+      </div>
+      <div class="slot">
+        <ul>
+          <li class="mouse">Samrit Paul</li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
+      </div>
+      <!-- FRI -->
+      <div class="day">Fri</div>
+      <div class="slot">
+        <ul>
+          <li>Anish Gharami</li>
+          <li>Soumik Dutta</li>
+          <li class="laptop">Anushka Das</li>
+          <li></li>
+          <li></li>
+        </ul>
+      </div>
+      <div class="slot">
+        <ul>
+          <li class="mouse">Sabita Mondal</li>
+          <li>Surajit Paul</li>
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
+      </div>
+      <div class="slot">
+        <ul>
+          <li>Somen Biswas</li>
+          <li class="mouse">Debagnik Dey (5pm)</li>
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
+      </div>
+      <div class="slot">
+        <ul>
+          <li class="mouse">Indrani Debnath</li>
+          <li class="mouse">Diya Das</li>
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
+      </div>
+      <!-- SAT -->
+      <div class="day">Sat</div>
+      <div class="slot">
+        <ul>
+          <li>Subhashish Raha</li>
+          <li class="laptop">Srijita Karmakar</li>
+          <li class="mouse">Unnayan Deb</li>
+          <li></li>
+          <li></li>
+        </ul>
+      </div>
+      <div class="slot">
+        <ul>
+          <li class="mouse">Sabita Mondal</li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
+      </div>
+      <div class="slot">
+        <ul>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
+      </div>
+      <div class="slot">
+        <ul>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
+      </div>
+    </section>
+
+    <footer>
+      <div class="toggle-section" data-toggle-id="web-dev-1">
+        <summary>Web Dev (Old)</summary>
+        <div class="toggle-content">
+          <ul>
+            <li data-d="d">Srijita Karmakar (22)</li>
+            <li data-d="d">Soumik Dutta (15)</li>
+            <li data-d="d">Subhashish Raha (11)</li>
+            <li data-d="d">Somen Biswas (09)</li>
+            <li data-d="d">Anish Gharami (07)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="toggle-section" data-toggle-id="web-dev-2">
+        <summary>Web Dev (New)</summary>
+        <div class="toggle-content">
+          <ul>
+            <li data-d="d">Anushka Das (03)</li>  
+            <li data-d="">Surajit Paul (02)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="toggle-section" data-toggle-id="basic-computer">
+        <summary>Basic Computer</summary>
+        <div class="toggle-content">
+          <ul>
+            <li data-d="d">Samrit Paul(std.8) (29)</li>
+            <li data-d="d">Diya Das(std.9) (25)</li>
+            <li data-d="d">Arnab Roy(std.8) (25)</li>
+            <li data-d="d">Rupanjana Roy(std.5) (17)</li>
+            <li data-d="d">Debagnik Dey(std.6) (08)</li>
+            <li data-d="d">Bihan Kundu(std.7) (07)</li>
+            <li data-d="d">Indrani Debnath (06)</li>
+            <li data-d="d">Unnayan Deb(std.7) (03)</li>
+            <li data-d="d">Sabita Mondal (02)</li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="./script.js?ver=3.0"></script>
+
+</body>
+
+<script src="https://cdn.jsdelivr.net/gh/amartadey/robotBlocker@main/robotBlocker.js"></script>
+
+</html>

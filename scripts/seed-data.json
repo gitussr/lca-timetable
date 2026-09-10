@@ -1,0 +1,455 @@
+{
+  "meta": {
+    "source": "github.com/learncomputeracademy/time",
+    "commit": "b46bb24",
+    "extractedAt": "2026-09-10T10:53:37.087Z",
+    "generator": "scripts/extract-legacy.ts",
+    "warning": "PROPOSAL, NOT TRUTH. Review every entry flagged `review` before seeding. Decision D2 (docs/phase-1-assessment.md) is unresolved.",
+    "counts": {
+      "students": 16,
+      "schedules": 41,
+      "timeRanges": 6,
+      "needsReview": 8
+    }
+  },
+  "courses": [
+    {
+      "slug": "web-development",
+      "name": "Web Development",
+      "shortName": "Web Dev",
+      "order": 0,
+      "defaultDuration": 120,
+      "sessionsPerWeek": 3,
+      "icon": "laptop"
+    },
+    {
+      "slug": "basic-computer",
+      "name": "Basic Computer",
+      "shortName": "Basic Computer",
+      "order": 1,
+      "defaultDuration": 90,
+      "sessionsPerWeek": 2,
+      "icon": "mouse"
+    }
+  ],
+  "students": [
+    {
+      "name": "Srijita Karmakar",
+      "courseSlug": "web-development",
+      "cohort": "old",
+      "studentClass": null,
+      "courseMonth": 22
+    },
+    {
+      "name": "Soumik Dutta",
+      "courseSlug": "web-development",
+      "cohort": "old",
+      "studentClass": null,
+      "courseMonth": 15
+    },
+    {
+      "name": "Subhashish Raha",
+      "courseSlug": "web-development",
+      "cohort": "old",
+      "studentClass": null,
+      "courseMonth": 11
+    },
+    {
+      "name": "Somen Biswas",
+      "courseSlug": "web-development",
+      "cohort": "old",
+      "studentClass": null,
+      "courseMonth": 9
+    },
+    {
+      "name": "Anish Gharami",
+      "courseSlug": "web-development",
+      "cohort": "old",
+      "studentClass": null,
+      "courseMonth": 7
+    },
+    {
+      "name": "Anushka Das",
+      "courseSlug": "web-development",
+      "cohort": "new",
+      "studentClass": null,
+      "courseMonth": 3
+    },
+    {
+      "name": "Surajit Paul",
+      "courseSlug": "web-development",
+      "cohort": "new",
+      "studentClass": null,
+      "courseMonth": 2
+    },
+    {
+      "name": "Samrit Paul",
+      "courseSlug": "basic-computer",
+      "cohort": null,
+      "studentClass": "8",
+      "courseMonth": 29
+    },
+    {
+      "name": "Diya Das",
+      "courseSlug": "basic-computer",
+      "cohort": null,
+      "studentClass": "9",
+      "courseMonth": 25
+    },
+    {
+      "name": "Arnab Roy",
+      "courseSlug": "basic-computer",
+      "cohort": null,
+      "studentClass": "8",
+      "courseMonth": 25
+    },
+    {
+      "name": "Rupanjana Roy",
+      "courseSlug": "basic-computer",
+      "cohort": null,
+      "studentClass": "5",
+      "courseMonth": 17
+    },
+    {
+      "name": "Debagnik Dey",
+      "courseSlug": "basic-computer",
+      "cohort": null,
+      "studentClass": "6",
+      "courseMonth": 8
+    },
+    {
+      "name": "Bihan Kundu",
+      "courseSlug": "basic-computer",
+      "cohort": null,
+      "studentClass": "7",
+      "courseMonth": 7
+    },
+    {
+      "name": "Indrani Debnath",
+      "courseSlug": "basic-computer",
+      "cohort": null,
+      "studentClass": null,
+      "courseMonth": 6
+    },
+    {
+      "name": "Unnayan Deb",
+      "courseSlug": "basic-computer",
+      "cohort": null,
+      "studentClass": "7",
+      "courseMonth": 3
+    },
+    {
+      "name": "Sabita Mondal",
+      "courseSlug": "basic-computer",
+      "cohort": null,
+      "studentClass": null,
+      "courseMonth": 2
+    }
+  ],
+  "schedules": [
+    {
+      "studentName": "Anish Gharami",
+      "day": "Mon",
+      "startTime": "10:30",
+      "endTime": "12:30"
+    },
+    {
+      "studentName": "Soumik Dutta",
+      "day": "Mon",
+      "startTime": "10:30",
+      "endTime": "12:30"
+    },
+    {
+      "studentName": "Anushka Das",
+      "day": "Mon",
+      "startTime": "10:30",
+      "endTime": "12:30"
+    },
+    {
+      "studentName": "Sabita Mondal",
+      "day": "Mon",
+      "startTime": "12:30",
+      "endTime": "14:30"
+    },
+    {
+      "studentName": "Surajit Paul",
+      "day": "Mon",
+      "startTime": "12:30",
+      "endTime": "14:30"
+    },
+    {
+      "studentName": "Somen Biswas",
+      "day": "Mon",
+      "startTime": "16:00",
+      "endTime": "18:00"
+    },
+    {
+      "studentName": "Arnab Roy",
+      "day": "Mon",
+      "startTime": "17:30",
+      "endTime": "19:00",
+      "review": "D2: start read from the \"5:30pm\" label; end derived as start + 90min course default."
+    },
+    {
+      "studentName": "Debagnik Dey",
+      "day": "Mon",
+      "startTime": "17:00",
+      "endTime": "18:30",
+      "review": "D2: start read from the \"5pm\" label; end derived as start + 90min course default."
+    },
+    {
+      "studentName": "Samrit Paul",
+      "day": "Mon",
+      "startTime": "18:00",
+      "endTime": "20:00"
+    },
+    {
+      "studentName": "Indrani Debnath",
+      "day": "Mon",
+      "startTime": "18:00",
+      "endTime": "20:00"
+    },
+    {
+      "studentName": "Bihan Kundu",
+      "day": "Mon",
+      "startTime": "17:00",
+      "endTime": "18:30",
+      "review": "D2 CONFLICT: labelled \"5pm\" but placed in the 18:00-20:00 column. Extracted as 17:00-18:30; a human must confirm which is the real class."
+    },
+    {
+      "studentName": "Subhashish Raha",
+      "day": "Tue",
+      "startTime": "10:30",
+      "endTime": "12:30"
+    },
+    {
+      "studentName": "Anushka Das",
+      "day": "Tue",
+      "startTime": "10:30",
+      "endTime": "12:30"
+    },
+    {
+      "studentName": "Sabita Mondal",
+      "day": "Tue",
+      "startTime": "12:30",
+      "endTime": "14:30"
+    },
+    {
+      "studentName": "Arnab Roy",
+      "day": "Tue",
+      "startTime": "17:00",
+      "endTime": "18:30",
+      "review": "D2: start read from the \"5pm\" label; end derived as start + 90min course default."
+    },
+    {
+      "studentName": "Anish Gharami",
+      "day": "Wed",
+      "startTime": "10:30",
+      "endTime": "12:30"
+    },
+    {
+      "studentName": "Soumik Dutta",
+      "day": "Wed",
+      "startTime": "10:30",
+      "endTime": "12:30"
+    },
+    {
+      "studentName": "Sabita Mondal",
+      "day": "Wed",
+      "startTime": "12:30",
+      "endTime": "14:30"
+    },
+    {
+      "studentName": "Surajit Paul",
+      "day": "Wed",
+      "startTime": "12:30",
+      "endTime": "14:30"
+    },
+    {
+      "studentName": "Somen Biswas",
+      "day": "Wed",
+      "startTime": "16:00",
+      "endTime": "18:00"
+    },
+    {
+      "studentName": "Rupanjana Roy",
+      "day": "Wed",
+      "startTime": "17:00",
+      "endTime": "18:30",
+      "review": "D2: start read from the \"5pm\" label; end derived as start + 90min course default."
+    },
+    {
+      "studentName": "Unnayan Deb",
+      "day": "Wed",
+      "startTime": "16:00",
+      "endTime": "18:00"
+    },
+    {
+      "studentName": "Subhashish Raha",
+      "day": "Thu",
+      "startTime": "10:30",
+      "endTime": "12:30"
+    },
+    {
+      "studentName": "Diya Das",
+      "day": "Thu",
+      "startTime": "10:30",
+      "endTime": "12:30"
+    },
+    {
+      "studentName": "Sabita Mondal",
+      "day": "Thu",
+      "startTime": "12:30",
+      "endTime": "14:30"
+    },
+    {
+      "studentName": "Bihan Kundu",
+      "day": "Thu",
+      "startTime": "17:00",
+      "endTime": "18:30",
+      "review": "D2: start read from the \"5pm\" label; end derived as start + 90min course default."
+    },
+    {
+      "studentName": "Rupanjana Roy",
+      "day": "Thu",
+      "startTime": "17:00",
+      "endTime": "18:30",
+      "review": "D2: start read from the \"5pm\" label; end derived as start + 90min course default."
+    },
+    {
+      "studentName": "Samrit Paul",
+      "day": "Thu",
+      "startTime": "18:00",
+      "endTime": "20:00"
+    },
+    {
+      "studentName": "Anish Gharami",
+      "day": "Fri",
+      "startTime": "10:30",
+      "endTime": "12:30"
+    },
+    {
+      "studentName": "Soumik Dutta",
+      "day": "Fri",
+      "startTime": "10:30",
+      "endTime": "12:30"
+    },
+    {
+      "studentName": "Anushka Das",
+      "day": "Fri",
+      "startTime": "10:30",
+      "endTime": "12:30"
+    },
+    {
+      "studentName": "Sabita Mondal",
+      "day": "Fri",
+      "startTime": "12:30",
+      "endTime": "14:30"
+    },
+    {
+      "studentName": "Surajit Paul",
+      "day": "Fri",
+      "startTime": "12:30",
+      "endTime": "14:30"
+    },
+    {
+      "studentName": "Somen Biswas",
+      "day": "Fri",
+      "startTime": "16:00",
+      "endTime": "18:00"
+    },
+    {
+      "studentName": "Debagnik Dey",
+      "day": "Fri",
+      "startTime": "17:00",
+      "endTime": "18:30",
+      "review": "D2: start read from the \"5pm\" label; end derived as start + 90min course default."
+    },
+    {
+      "studentName": "Indrani Debnath",
+      "day": "Fri",
+      "startTime": "18:00",
+      "endTime": "20:00"
+    },
+    {
+      "studentName": "Diya Das",
+      "day": "Fri",
+      "startTime": "18:00",
+      "endTime": "20:00"
+    },
+    {
+      "studentName": "Subhashish Raha",
+      "day": "Sat",
+      "startTime": "10:30",
+      "endTime": "12:30"
+    },
+    {
+      "studentName": "Srijita Karmakar",
+      "day": "Sat",
+      "startTime": "10:30",
+      "endTime": "12:30"
+    },
+    {
+      "studentName": "Unnayan Deb",
+      "day": "Sat",
+      "startTime": "10:30",
+      "endTime": "12:30"
+    },
+    {
+      "studentName": "Sabita Mondal",
+      "day": "Sat",
+      "startTime": "12:30",
+      "endTime": "14:30"
+    }
+  ],
+  "settings": {
+    "days": [
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri",
+      "Sat"
+    ],
+    "timeRanges": [
+      {
+        "id": "1030-1230",
+        "startTime": "10:30",
+        "endTime": "12:30",
+        "order": 0
+      },
+      {
+        "id": "1230-1430",
+        "startTime": "12:30",
+        "endTime": "14:30",
+        "order": 1
+      },
+      {
+        "id": "1600-1800",
+        "startTime": "16:00",
+        "endTime": "18:00",
+        "order": 2
+      },
+      {
+        "id": "1700-1830",
+        "startTime": "17:00",
+        "endTime": "18:30",
+        "order": 3
+      },
+      {
+        "id": "1730-1900",
+        "startTime": "17:30",
+        "endTime": "19:00",
+        "order": 4
+      },
+      {
+        "id": "1800-2000",
+        "startTime": "18:00",
+        "endTime": "20:00",
+        "order": 5
+      }
+    ],
+    "slotCapacity": 5,
+    "emptySeatDivisor": 3
+  }
+}

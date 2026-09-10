@@ -1,0 +1,277 @@
+/**
+ * Parses the frozen legacy index.html into scripts/seed-data.json (§36).
+ *
+ * Nothing is retyped by hand: names, course months, school standards, days and
+ * times are all read out of the markup. Output is committed and reviewed
+ * BEFORE seeding — this script produces a proposal, not the truth.
+ *
+ * Run: npm run extract:legacy
+ */
+import { readFileSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { COURSE_ICONS } from '../lib/constants';
+
+const HERE = join(process.cwd(), 'scripts');
+const SOURCE = join(HERE, 'legacy', 'index.html');
+const OUT = join(HERE, 'seed-data.json');
+const SOURCE_COMMIT = 'b46bb24';
+
+/**
+ * The four legacy column headers, decoded to 24-hour. The headers themselves
+ * read "12:30-02:30" / "04:00-06:00" with no AM/PM; script.js's timeSlots array
+ * is the only authoritative decoding, and this mirrors it exactly.
+ */
+const COLUMNS = [
+  { startTime: '10:30', endTime: '12:30' },
+  { startTime: '12:30', endTime: '14:30' },
+  { startTime: '16:00', endTime: '18:00' },
+  { startTime: '18:00', endTime: '20:00' },
+] as const;
+
+const COURSES = [
+  // shortName reproduces the legacy footer headings verbatim (§5, §19).
+  { slug: 'web-development', name: 'Web Development', shortName: 'Web Dev', order: 0, defaultDuration: 120, sessionsPerWeek: 3, icon: 'laptop' },
+  { slug: 'basic-computer', name: 'Basic Computer', shortName: 'Basic Computer', order: 1, defaultDuration: 90, sessionsPerWeek: 2, icon: 'mouse' },
+] as const;
+
+/** Footer section heading -> course + cohort. Resolves D1. */
+const SECTION_MAP: Record<string, { courseSlug: string; cohort: 'old' | 'new' | null }> = {
+  'Web Dev (Old)': { courseSlug: 'web-development', cohort: 'old' },
+  'Web Dev (New)': { courseSlug: 'web-development', cohort: 'new' },
+  'Basic Computer': { courseSlug: 'basic-computer', cohort: null },
+};
+
+interface Student {
+  name: string;
+  courseSlug: string;
+  cohort: 'old' | 'new' | null;
+  studentClass: string | null;
+  courseMonth: number;
+}
+
+interface Schedule {
+  studentName: string;
+  day: string;
+  startTime: string;
+  endTime: string;
+  /** Set when this row encodes a decision that a human still has to confirm. */
+  review?: string;
+}
+
+const html = readFileSync(SOURCE, 'utf8');
+
+/* ---------------------------------------------------------------- footer */
+
+function parseFooter(): Student[] {
+  const footer = /<footer>([\s\S]*?)<\/footer>/.exec(html);
+  if (!footer) throw new Error('No <footer> in legacy source');
+
+  const students: Student[] = [];
+  const sectionRe = /<summary>(.*?)<\/summary>([\s\S]*?)<\/ul>/g;
+
+  for (const match of footer[1]!.matchAll(sectionRe)) {
+    const heading = match[1]!.trim();
+    const section = SECTION_MAP[heading];
+    if (!section) throw new Error('Unmapped footer section: ' + heading);
+
+    for (const li of match[2]!.matchAll(/<li[^>]*>(.*?)<\/li>/g)) {
+      const text = li[1]!.trim();
+      if (!text) continue;
+
+      // "Samrit Paul(std.8) (29)" -> name / studentClass / courseMonth  (§13)
+      const std = /\(\s*std\.?\s*(\w+)\s*\)/i.exec(text);
+      const month = /\((\d+)\)\s*$/.exec(text);
+      if (!month) throw new Error('No course month in footer entry: ' + text);
+
+      const name = text
+        .replace(/\(\s*std\.?\s*\w+\s*\)/i, '')
+        .replace(/\((\d+)\)\s*$/, '')
+        .trim();
+
+      students.push({
+        name,
+        courseSlug: section.courseSlug,
+        cohort: section.cohort,
+        studentClass: std ? std[1]! : null,
+        // Number, not a zero-padded string - "09" is presentation (§12).
+        courseMonth: Number(month[1]),
+      });
+    }
+  }
+  return students;
+}
+
+/* ------------------------------------------------------------- timetable */
+
+/** "5pm" -> 17:00, "5:30pm" -> 17:30 */
+function parseAnnotation(a: string): string | null {
+  const m = /^(\d{1,2})(?::(\d{2}))?\s*(am|pm)$/i.exec(a.trim());
+  if (!m) return null;
+  let h = Number(m[1]);
+  const min = m[2] ? Number(m[2]) : 0;
+  const pm = m[3]!.toLowerCase() === 'pm';
+  if (pm && h !== 12) h += 12;
+  if (!pm && h === 12) h = 0;
+  return String(h).padStart(2, '0') + ':' + String(min).padStart(2, '0');
+}
+
+function addMinutes(time: string, mins: number): string {
+  const parts = time.split(':').map(Number);
+  const total = parts[0]! * 60 + parts[1]! + mins;
+  return String(Math.floor(total / 60) % 24).padStart(2, '0') + ':' + String(total % 60).padStart(2, '0');
+}
+
+function parseTimetable(students: Student[]): Schedule[] {
+  const section = /<section class="timetable">([\s\S]*?)<\/section>/.exec(html);
+  if (!section) throw new Error('No timetable section in legacy source');
+
+  const byName = new Map(students.map((s) => [s.name, s]));
+  const durationOf = (slug: string) => COURSES.find((c) => c.slug === slug)!.defaultDuration;
+
+  const out: Schedule[] = [];
+  const dayBlocks = section[1]!.split(/<div class="day">/).slice(1);
+
+  for (const block of dayBlocks) {
+    const day = block.slice(0, block.indexOf('<')).trim();
+    const cells = [...block.matchAll(/<div class="slot">\s*<ul>([\s\S]*?)<\/ul>/g)];
+
+    cells.forEach((cell, columnIndex) => {
+      const column = COLUMNS[columnIndex];
+      if (!column) throw new Error(day + ': unexpected column ' + columnIndex);
+
+      for (const li of cell[1]!.matchAll(/<li[^>]*>(.*?)<\/li>/g)) {
+        const text = li[1]!.trim();
+        if (!text) continue; // padding <li>
+
+        const ann = /\(([^)]*)\)/.exec(text);
+        const name = text.replace(/\s*\([^)]*\)/, '').trim();
+        const student = byName.get(name);
+        if (!student) throw new Error('Timetable name absent from footer roster: ' + name);
+
+        if (!ann) {
+          // No annotation: take the column exactly as displayed. The student's
+          // schedule is authoritative, not the course default (§41) - see D2.
+          out.push({ studentName: name, day, startTime: column.startTime, endTime: column.endTime });
+          continue;
+        }
+
+        const startTime = parseAnnotation(ann[1]!);
+        if (!startTime) throw new Error('Unparseable annotation on ' + name + ': ' + ann[1]);
+
+        const duration = durationOf(student.courseSlug);
+        const endTime = addMinutes(startTime, duration);
+        const conflicts = startTime < column.startTime || startTime >= column.endTime;
+
+        out.push({
+          studentName: name,
+          day,
+          startTime,
+          endTime,
+          review: conflicts
+            ? 'D2 CONFLICT: labelled "' + ann[1] + '" but placed in the ' +
+              column.startTime + '-' + column.endTime + ' column. Extracted as ' +
+              startTime + '-' + endTime + '; a human must confirm which is the real class.'
+            : 'D2: start read from the "' + ann[1] + '" label; end derived as start + ' +
+              duration + 'min course default.',
+        });
+      }
+    });
+  }
+  return out;
+}
+
+/* ------------------------------------------------------------------ main */
+
+const students = parseFooter();
+const schedules = parseTimetable(students);
+
+// Columns are derived from the schedules that exist, then stored in settings so
+// an admin can add an empty one later without code changes (§16, §40).
+const ranges = [...new Set(schedules.map((s) => s.startTime + '|' + s.endTime))]
+  .map((key) => {
+    const pair = key.split('|') as [string, string];
+    return { startTime: pair[0], endTime: pair[1] };
+  })
+  .sort((a, b) => a.startTime.localeCompare(b.startTime) || a.endTime.localeCompare(b.endTime))
+  .map((r, order) => ({
+    id: (r.startTime + '-' + r.endTime).replace(/:/g, ''),
+    startTime: r.startTime,
+    endTime: r.endTime,
+    order,
+  }));
+
+const needsReview = schedules.filter((s) => s.review);
+
+const payload = {
+  meta: {
+    source: 'github.com/learncomputeracademy/time',
+    commit: SOURCE_COMMIT,
+    extractedAt: new Date().toISOString(),
+    generator: 'scripts/extract-legacy.ts',
+    warning:
+      'PROPOSAL, NOT TRUTH. Review every entry flagged `review` before seeding. ' +
+      'Decision D2 (docs/phase-1-assessment.md) is unresolved.',
+    counts: {
+      students: students.length,
+      schedules: schedules.length,
+      timeRanges: ranges.length,
+      needsReview: needsReview.length,
+    },
+  },
+  courses: COURSES,
+  students,
+  schedules,
+  settings: {
+    days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+    timeRanges: ranges,
+    slotCapacity: 5,
+    emptySeatDivisor: 3,
+  },
+};
+
+writeFileSync(OUT, JSON.stringify(payload, null, 2) + '\n', 'utf8');
+
+/* --------------------------------------------------------------- report */
+
+console.log('extracted from ' + SOURCE_COMMIT + '\n');
+console.log('  students     ' + students.length);
+console.log('  schedules    ' + schedules.length);
+console.log('  time ranges  ' + ranges.length + '  (legacy had 4)');
+console.log('  courses      ' + COURSES.length + '\n');
+
+console.log('derived timetable columns:');
+for (const r of ranges) {
+  const n = schedules.filter((s) => s.startTime === r.startTime && s.endTime === r.endTime).length;
+  const isNew = !COLUMNS.some((c) => c.startTime === r.startTime && c.endTime === r.endTime);
+  console.log(
+    '  ' + r.startTime + '-' + r.endTime + '  ' + String(n).padStart(2) + ' classes' +
+      (isNew ? '   <- NEW, from a (5pm) label' : ''),
+  );
+}
+
+if (needsReview.length) {
+  console.log('\n' + needsReview.length + ' rows need human sign-off (D2):');
+  for (const s of needsReview) {
+    const bad = s.review!.startsWith('D2 CONFLICT');
+    console.log(
+      '  ' + (bad ? '!!' : '  ') + ' ' + s.day + ' ' + s.startTime + '-' + s.endTime + '  ' + s.studentName,
+    );
+    if (bad) console.log('       ' + s.review);
+  }
+}
+
+// Sanity: the two hand-maintained copies must reconcile (§19, §20).
+const scheduled = new Set(schedules.map((s) => s.studentName));
+const roster = new Set(students.map((s) => s.name));
+const orphanA = [...scheduled].filter((n) => !roster.has(n));
+const orphanB = [...roster].filter((n) => !scheduled.has(n));
+
+console.log(
+  '\nreconciliation: ' +
+    (orphanA.length === 0 && orphanB.length === 0 ? 'clean - roster and grid agree' : 'MISMATCH'),
+);
+if (orphanA.length) console.log('  in grid, not roster:  ' + orphanA.join(', '));
+if (orphanB.length) console.log('  in roster, not grid:  ' + orphanB.join(', '));
+
+if (!COURSE_ICONS.includes(COURSES[0].icon)) throw new Error('icon key drift');
+console.log('\nwrote ' + OUT);

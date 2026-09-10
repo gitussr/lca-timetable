@@ -1,0 +1,45 @@
+{
+  "name": "lca-timetable",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Learn Computer Academy collaborative class timetable",
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "extract:legacy": "tsx scripts/extract-legacy.ts",
+    "seed": "tsx --env-file-if-exists=.env.local scripts/seed.ts",
+    "create:admin": "tsx --env-file-if-exists=.env.local scripts/create-admin.ts",
+    "check:schemas": "tsx scripts/check-schemas.ts",
+    "ensure-indexes": "tsx --env-file-if-exists=.env.local scripts/ensure-indexes.ts",
+    "check:api": "tsx scripts/check-api.ts",
+    "test:reset": "tsx --env-file-if-exists=.env.local scripts/reset-test-db.ts",
+    "check:render": "tsx scripts/check-render.ts",
+    "check:themes": "tsx scripts/check-themes.ts",
+    "check:security": "tsx scripts/check-security.ts",
+    "check:bundle": "tsx scripts/check-bundle.ts",
+    "check:edge": "tsx scripts/check-edge.ts",
+    "check:all": "tsx --env-file-if-exists=.env.local scripts/check-all.ts",
+    "preflight": "tsx --env-file-if-exists=.env.local scripts/preflight.ts"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "mongodb": "^6.12.0",
+    "next": "^16.3.4",
+    "next-auth": "^5.0.0-beta.32",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "zod": "^4.6.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}
