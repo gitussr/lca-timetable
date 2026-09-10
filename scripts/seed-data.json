@@ -2,14 +2,15 @@
   "meta": {
     "source": "github.com/learncomputeracademy/time",
     "commit": "b46bb24",
-    "extractedAt": "2026-09-10T10:53:37.087Z",
+    "extractedAt": "2026-09-10T14:51:44.591Z",
     "generator": "scripts/extract-legacy.ts",
     "warning": "PROPOSAL, NOT TRUTH. Review every entry flagged `review` before seeding. Decision D2 (docs/phase-1-assessment.md) is unresolved.",
     "counts": {
       "students": 16,
       "schedules": 41,
       "timeRanges": 6,
-      "needsReview": 8
+      "needsReview": 0,
+      "resolved": 8
     }
   },
   "courses": [
@@ -188,14 +189,14 @@
       "day": "Mon",
       "startTime": "17:30",
       "endTime": "19:00",
-      "review": "D2: start read from the \"5:30pm\" label; end derived as start + 90min course default."
+      "derivedFrom": "start read from the \"5:30pm\" label; end derived as start + 90min course default."
     },
     {
       "studentName": "Debagnik Dey",
       "day": "Mon",
       "startTime": "17:00",
       "endTime": "18:30",
-      "review": "D2: start read from the \"5pm\" label; end derived as start + 90min course default."
+      "derivedFrom": "start read from the \"5pm\" label; end derived as start + 90min course default."
     },
     {
       "studentName": "Samrit Paul",
@@ -214,7 +215,7 @@
       "day": "Mon",
       "startTime": "17:00",
       "endTime": "18:30",
-      "review": "D2 CONFLICT: labelled \"5pm\" but placed in the 18:00-20:00 column. Extracted as 17:00-18:30; a human must confirm which is the real class."
+      "derivedFrom": "D2 resolved: the \"5pm\" label wins over the 18:00 column placement."
     },
     {
       "studentName": "Subhashish Raha",
@@ -239,7 +240,7 @@
       "day": "Tue",
       "startTime": "17:00",
       "endTime": "18:30",
-      "review": "D2: start read from the \"5pm\" label; end derived as start + 90min course default."
+      "derivedFrom": "start read from the \"5pm\" label; end derived as start + 90min course default."
     },
     {
       "studentName": "Anish Gharami",
@@ -276,7 +277,7 @@
       "day": "Wed",
       "startTime": "17:00",
       "endTime": "18:30",
-      "review": "D2: start read from the \"5pm\" label; end derived as start + 90min course default."
+      "derivedFrom": "start read from the \"5pm\" label; end derived as start + 90min course default."
     },
     {
       "studentName": "Unnayan Deb",
@@ -307,14 +308,14 @@
       "day": "Thu",
       "startTime": "17:00",
       "endTime": "18:30",
-      "review": "D2: start read from the \"5pm\" label; end derived as start + 90min course default."
+      "derivedFrom": "start read from the \"5pm\" label; end derived as start + 90min course default."
     },
     {
       "studentName": "Rupanjana Roy",
       "day": "Thu",
       "startTime": "17:00",
       "endTime": "18:30",
-      "review": "D2: start read from the \"5pm\" label; end derived as start + 90min course default."
+      "derivedFrom": "start read from the \"5pm\" label; end derived as start + 90min course default."
     },
     {
       "studentName": "Samrit Paul",
@@ -363,7 +364,7 @@
       "day": "Fri",
       "startTime": "17:00",
       "endTime": "18:30",
-      "review": "D2: start read from the \"5pm\" label; end derived as start + 90min course default."
+      "derivedFrom": "start read from the \"5pm\" label; end derived as start + 90min course default."
     },
     {
       "studentName": "Indrani Debnath",
