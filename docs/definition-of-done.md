@@ -37,7 +37,7 @@ the CSS, not screenshotted. Worth one look on a real phone.
 
 | | Item | Evidence |
 |---|---|---|
-| ✅ | MongoDB Atlas stores application data | Live on Atlas — replica set `atlas-xgye96-shard-0`, 9 indexes, seeded 16/41/2. ⚠️ the suites still run against a local mongod — see below |
+| ✅ | MongoDB Atlas stores application data | Live on Atlas — a replica set, 9 indexes, seeded 16/41/2. ⚠️ the suites still run against a local mongod — see below |
 | ✅ | MongoDB credentials are server-side only | `check:bundle` greps the built client assets |
 | ✅ | Students / courses / timetable / footer are database-driven | `check:render` — no legacy data left in the markup |
 | ✅ | Course month numbers preserved | `check:render` — footer entries match character for character |
@@ -103,7 +103,7 @@ MongoServerSelectionError: ... tlsv1 alert internal error ... SSL alert number 8
 Atlas accepts the TCP connection and then aborts the TLS handshake **without
 returning a certificate**. That is its signature for a client IP that is not on
 the access list — it is not DNS (the SRV record resolves to three nodes of
-replica set `atlas-xgye96-shard-0`), not the credential (authentication happens
+the cluster's replica set), not the credential (authentication happens
 after TLS), and not a corporate proxy (one would present its own certificate).
 
 Fixed by allowing `0.0.0.0/0` — Vercel functions have no fixed IPs. It takes
@@ -147,8 +147,8 @@ connection badge must not read "Live updates unavailable".
 
 ### ⏳ The leaked credential is still in use
 
-`MONGODB_URI` still names `ranjitkarmakar1678_db_user` — the username printed in
-`master-prompt.md` §1, and therefore public. The password has been changed; the
+`MONGODB_URI` still names the database user named in `master-prompt.md` §1 —
+and that name is therefore public. The password has been changed; the
 username has not. **Deferred deliberately by the academy on 2026-09-11** to get
 the site live first.
 
