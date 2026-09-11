@@ -59,12 +59,33 @@ function createClient(): Promise<MongoClient> {
 }
 
 export function getClient(): Promise<MongoClient> {
-  if (process.env.NODE_ENV === 'development') {
-    globalThis.__lcaMongoClientPromise ??= createClient();
-    return globalThis.__lcaMongoClientPromise;
-  }
-  cachedClientPromise ??= createClient();
-  return cachedClientPromise;
+  const dev = process.env.NODE_ENV === 'development';
+  const existing = dev ? globalThis.__lcaMongoClientPromise : cachedClientPromise;
+  if (existing) return existing;
+
+  /*
+   * Caching the promise rather than the client is what lets concurrent
+   * first-requests share one connect(). But a REJECTED promise must never stay
+   * cached: instances are frozen and thawed rather than torn down, so one that
+   * happened to start while the database was unreachable would re-throw that
+   * same rejection for the rest of its life — no retry, no new connection, and
+   * no log line to show for it, because nothing tries again.
+   *
+   * That is not hypothetical. It is exactly what happened on 2026-09-11: the
+   * first production deployment came up while the Atlas access list was still
+   * closed, and kept failing after the list was opened.
+   *
+   * So: clear the slot on failure, and the next request connects afresh.
+   */
+  const promise = createClient().catch((err: unknown) => {
+    if (dev) globalThis.__lcaMongoClientPromise = undefined;
+    else cachedClientPromise = undefined;
+    throw err;
+  });
+
+  if (dev) globalThis.__lcaMongoClientPromise = promise;
+  else cachedClientPromise = promise;
+  return promise;
 }
 
 let cachedClientPromise: Promise<MongoClient> | undefined;
