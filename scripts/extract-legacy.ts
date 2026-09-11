@@ -255,9 +255,11 @@ const payload = {
     commit: SOURCE_COMMIT,
     extractedAt: new Date().toISOString(),
     generator: 'scripts/extract-legacy.ts',
-    warning:
-      'PROPOSAL, NOT TRUTH. Review every entry flagged `review` before seeding. ' +
-      'Decision D2 (docs/phase-1-assessment.md) is unresolved.',
+    warning: needsReview.length
+      ? 'PROPOSAL, NOT TRUTH. Review every entry flagged `review` before seeding. ' +
+        needsReview.length + ' entr' + (needsReview.length === 1 ? 'y' : 'ies') + ' await sign-off.'
+      : 'Extracted from the legacy markup and reconciled. No entry awaits review; ' +
+        'rows carrying `derivedFrom` record how a time was derived (see D2, resolved).',
     counts: {
       students: students.length,
       schedules: schedules.length,

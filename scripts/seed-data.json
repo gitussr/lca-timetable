@@ -2,9 +2,9 @@
   "meta": {
     "source": "github.com/learncomputeracademy/time",
     "commit": "b46bb24",
-    "extractedAt": "2026-09-10T14:51:44.591Z",
+    "extractedAt": "2026-09-11T07:04:48.971Z",
     "generator": "scripts/extract-legacy.ts",
-    "warning": "PROPOSAL, NOT TRUTH. Review every entry flagged `review` before seeding. Decision D2 (docs/phase-1-assessment.md) is unresolved.",
+    "warning": "Extracted from the legacy markup and reconciled. No entry awaits review; rows carrying `derivedFrom` record how a time was derived (see D2, resolved).",
     "counts": {
       "students": 16,
       "schedules": 41,

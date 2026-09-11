@@ -364,14 +364,16 @@ Phases 6 and 8 are the two where design regression is most likely; both should b
 
 ## Decisions
 
-**Status as of 2026-09-10:** D1, D3, D4, D5 **resolved** — proposals accepted as written below.
-**D2 remains open** and blocks the seed data being called authoritative.
+**Status as of 2026-09-10:** D1–D5 **resolved** — proposals accepted as written below,
+D2's open sub-question settled in favour of the label (see below). The seed data carries
+no entry awaiting review.
+**D7** (the `data-d` attribute, `docs/phase-6-visual-deltas.md`) remains open; nothing depends on it.
 
 **D1 — "Web Dev (Old)" vs "Web Dev (New)".** §11 defines two courses, but the footer shows three sections. Proposal: one `Web Development` course plus a `cohort` field on the student (`"old"` / `"new"`), with the footer grouping by course-then-cohort. Keeps §11's course model intact and the footer visually identical. Alternative: make them two real courses (simpler render, but contradicts §11 and duplicates the Web Dev defaults).
 
 **D2 — the annotated 5pm/5:30pm students.** Once these become real `startTime` values, they no longer belong in the 16:00 column, and the grid gains a 17:00 column. Two sub-questions:
 - What `endTime`? Proposal: annotated start + the course's 90-minute default → Arnab Mon `17:30–19:00`, the 5pm group `17:00–18:30`.
-- **Bihan Kundu, Monday** is in the 18:00–20:00 column but labelled 5pm. Which is right? This one needs a human who knows the actual class.
+- **Bihan Kundu, Monday** is in the 18:00–20:00 column but labelled 5pm. Which is right? **Resolved 2026-09-10: the label wins — `17:00–18:30`**, matching his Thursday class and the 90-minute Basic Computer default. Recorded as a `RESOLUTIONS` entry in `scripts/extract-legacy.ts`, since `seed-data.json` is regenerated.
 - Basic Computer students with *no* annotation (Samrit, Indrani, Unnayan, Sabita, Diya) — keep their column's existing 2-hour end time, or apply the 90-minute course default? Proposal: **keep as displayed**, since §41 makes the student's schedule authoritative over course defaults, and this preserves the current layout.
 
 **D3 — icons.** Data-driven icons give all 7 Web Dev students a laptop, where only 2 have one today. Confirm this correction is wanted (§42 implies yes) — it's the one intentional visual change in the migration.

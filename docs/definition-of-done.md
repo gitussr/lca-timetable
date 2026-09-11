@@ -44,7 +44,7 @@ the CSS, not screenshotted. Worth one look on a real phone.
 | ✅ | Basic Computer standards structured | `studentClass` split out; `check:api` proves it survives a partial update |
 | ✅ | Course icons are data-driven | `check:render` |
 | ✅ | Web Dev 3 days/2h, Basic Computer 2 days/1.5h | Seeded as course defaults |
-| ✅ | Individual schedule times supported | ⚠️ see D2 below |
+| ✅ | Individual schedule times supported | `check:api`; the `(5pm)` annotations became real times — D2, resolved |
 | ✅ | 5 PM / 5:30 PM schedules work | The `(5pm)` labels became real times — that is what took 4 columns to 6 |
 | ✅ | Existing data migrated | 16 students, 41 assignments, reconciled |
 
@@ -78,6 +78,19 @@ the CSS, not screenshotted. Worth one look on a real phone.
 
 ---
 
+## Settled since the last pass
+
+### ✅ D2 — Bihan Kundu's Monday class (2026-09-10)
+
+The original page placed him in the **18:00–20:00** column and labelled him
+**5pm**. Settled in favour of the label — **17:00–18:30** — matching his
+Thursday class and the 90-minute Basic Computer default.
+
+The decision lives in `RESOLUTIONS` in `scripts/extract-legacy.ts`, not in
+`seed-data.json`, because that file is regenerated and a hand-edit to the output
+would be silently undone. No entry awaits review, `seed` no longer refuses to
+run, and **the seed data is authoritative**.
+
 ## What is genuinely not done
 
 ### ⏳ The Atlas credential
@@ -89,17 +102,6 @@ set, which is functionally equivalent — including change streams.
 **Remaining work:** rotate it, set the environment variables, then
 `ensure-indexes`, `seed`, `create:admin`. `npm run preflight` refuses the leaked
 credential by name.
-
-### ⏳ D2 — Bihan Kundu's Monday class
-
-The original page places him in the **18:00–20:00** column and labels him
-**5pm**. The source contradicts itself, and no amount of reading it will settle
-which is right.
-
-`scripts/seed-data.json` carries the extracted value with a `review` field
-explaining the conflict, and **`seed` refuses to run** until it is resolved or
-explicitly overridden. This is the only thing preventing the seed data from
-being called authoritative.
 
 ### ⏳ D7 — the `data-d` attribute
 
