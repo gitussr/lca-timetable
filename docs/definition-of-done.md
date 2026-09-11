@@ -74,7 +74,7 @@ the CSS, not screenshotted. Worth one look on a real phone.
 | ✅ | Local development works | This is how everything above was tested |
 | ✅ | README updated | `README.md` |
 | ✅ | No secrets committed | `.gitignore` covers `.env*` and `master-prompt.md`; every phase ended with a credential sweep |
-| ⏳ | **Vercel deployment works** | Prepared, not performed — see below |
+| ⚠️ | **Vercel deployment works** | Deployed and live 2026-09-11 — builds, renders, serves `/login`, rejects `/api/me` with 401. Cannot reach the database — see below |
 
 ---
 
@@ -93,15 +93,40 @@ run, and **the seed data is authoritative**.
 
 ## What is genuinely not done
 
-### ⏳ The Atlas credential
+### ⏳ Atlas Network Access — the one thing between here and a working site
 
-The one printed in `master-prompt.md` §1 is compromised by having been written
-down. Everything was therefore built and tested against a local MongoDB replica
-set, which is functionally equivalent — including change streams.
+The deployment is live at
+`https://lca-timetable-web-devs-projects-d28f23dd.vercel.app`. It builds,
+renders, and enforces its own auth. **Every database call fails**, from Vercel
+and from a developer machine alike, with the same error:
 
-**Remaining work:** rotate it, set the environment variables, then
-`ensure-indexes`, `seed`, `create:admin`. `npm run preflight` refuses the leaked
-credential by name.
+```
+MongoServerSelectionError: ... tlsv1 alert internal error ... SSL alert number 80
+```
+
+Atlas accepts the TCP connection and then aborts the TLS handshake **without
+returning a certificate**. That is its signature for a client IP that is not on
+the access list — it is not DNS (the SRV record resolves to three nodes of
+replica set `atlas-xgye96-shard-0`), not the credential (authentication happens
+after TLS), and not a corporate proxy (one would present its own certificate).
+
+**Remaining work:** Atlas → Network Access → Add IP Address → **Allow Access
+from Anywhere (`0.0.0.0/0`)**. Vercel functions have no fixed IPs, so this is
+the usual answer; it makes the database password the only thing protecting the
+data. Then, from a machine with the production values in `.env.local`:
+`ensure-indexes`, `seed`, `create:admin`.
+
+### ⏳ The leaked credential is still in use
+
+`MONGODB_URI` still names `ranjitkarmakar1678_db_user` — the username printed in
+`master-prompt.md` §1, and therefore public. The password has been changed; the
+username has not. **Deferred deliberately by the academy on 2026-09-11** to get
+the site live first.
+
+Closing it means creating a *new* database user in Atlas, deleting the published
+one, and updating `MONGODB_URI` in both `.env.local` and the Vercel project
+(Production and Preview). `npm run preflight` fails until this is done, and says
+so in those terms.
 
 ### ⏳ D7 — the `data-d` attribute
 
@@ -120,9 +145,10 @@ Nothing is broken by this. It needs someone who knows what the flag meant.
   the `maxDuration` export in `app/api/stream/route.ts` are both configurable;
   `docs/deployment.md` §5 says what to check and what happens if it is wrong (a
   slightly less tidy reconnect, not lost data).
-- **Atlas Network Access** will likely need `0.0.0.0/0`, since Vercel functions
-  have no fixed IPs. That makes the database password the only thing protecting
-  the data.
+- **Vercel Authentication was on**, putting the whole site behind Vercel SSO —
+  every route 302'd to `vercel.com/sso-api`. Disabled on 2026-09-11 so the
+  academy can reach it. Safe: the app requires its own login, there is no signup
+  route, and accounts are created only by `create:admin`.
 
 ### ⚠️ Known trade-offs, decided deliberately
 
