@@ -108,10 +108,13 @@ npm run ensure-indexes
 npm run seed
 ```
 
-`seed` refuses to run while `scripts/seed-data.json` still contains an
-unresolved data conflict. As of writing there is one — see **D2** in
-[`phase-1-assessment.md`](phase-1-assessment.md). Resolve it in the JSON, or
-pass `-- --allow-unreviewed` if you accept the extracted value.
+`seed` refuses to run while `scripts/seed-data.json` contains an unresolved data
+conflict. **There are none** — the one that existed (D2, Bihan Kundu's Monday
+class) was resolved on 2026-09-10; see
+[`phase-1-assessment.md`](phase-1-assessment.md). If a future extraction raises a
+new conflict, resolve it in `RESOLUTIONS` in `scripts/extract-legacy.ts` — not in
+the JSON, which is regenerated — or pass `-- --allow-unreviewed` to accept the
+extracted value as-is.
 
 Both commands are idempotent and safe to re-run.
 
