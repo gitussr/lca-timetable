@@ -37,3 +37,6 @@ master-prompt.md
 
 # Vercel CLI link metadata.
 .vercel
+
+# Local replica-set credentials for the test suites (docs/local-testing.md).
+test.env

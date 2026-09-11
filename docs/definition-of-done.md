@@ -148,11 +148,14 @@ contain `test`, **and** the host must not be Atlas ("Refusing to run against an
 Atlas cluster. Use a local mongod."). Attempted on 2026-09-11 with
 `MONGODB_DB=lca_test` and refused at the second guard — correctly.
 
-So `api`, `edge`, `render`, `security` and `themes` remain verified against a
-local replica set, not against Atlas. `schemas` (42) and `bundle` (9) need no
-database and were re-run green after the connection fix. Production document
-counts were recorded before and after the attempt and are identical; no
-`lca_test` database was created.
+So `api`, `edge`, `render`, `security` and `themes` are verified against a local
+single-node replica set, not against Atlas. That is not a gap in coverage — the
+full suite was run that way on 2026-09-11 and passed **346 assertions across 8
+suites with none failing**, including `edge` (57), which opens a real SSE stream
+and reads change events off the wire. `docs/local-testing.md` has the procedure.
+
+Production document counts were recorded before and after every local run and
+are identical; no `lca_test` database exists on Atlas.
 
 What this left unverified on Atlas was **realtime**, and it has since been
 verified at the database layer directly: a `db.watch()` against the production

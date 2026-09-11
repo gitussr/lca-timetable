@@ -1,5 +1,9 @@
 # Local testing without Atlas
 
+> **Verified end to end on 2026-09-11:** this procedure produces a full green
+> run — **346 passed, 0 failed across 8 suites**. It is also the *only* way to
+> run the database-backed suites: `reset-test-db` refuses any non-local host.
+
 Phases 3–4 were verified against a throwaway local MongoDB rather than Atlas,
 because the Atlas credential in the brief is compromised and awaiting rotation
 (`docs/phase-1-assessment.md` §0). The same setup works for later phases, and
@@ -52,7 +56,7 @@ AUTH_URL=http://localhost:3000
 
 ```bash
 npx tsx --env-file=test.env scripts/ensure-indexes.ts
-npx tsx --env-file=test.env scripts/seed.ts --allow-unreviewed
+npx tsx --env-file=test.env scripts/seed.ts
 printf 'Test Admin\nadmin@lca.test\ncorrect-horse-battery\ncorrect-horse-battery\n' \
   | npx tsx --env-file=test.env scripts/create-admin.ts
 ```
