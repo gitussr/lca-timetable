@@ -29,6 +29,7 @@ const SUITES: Suite[] = [
   // Pure functions — no server, no database.
   { name: 'schemas', script: 'scripts/check-schemas.ts', reset: false, server: false },
   { name: 'merge', script: 'scripts/check-merge.ts', reset: false, server: false },
+  { name: 'view', script: 'scripts/check-view.ts', reset: false, server: false },
   // Build output — needs `npm run build` to have run.
   { name: 'bundle', script: 'scripts/check-bundle.ts', reset: false, server: false, build: true },
   // Read-mostly, but asserts exact seed counts, so start clean.

@@ -139,6 +139,19 @@ What remains true: the cluster is open to `0.0.0.0/0`, so the new password is
 the only thing protecting the data. It has never been written down outside
 `.env.local` and the Vercel environment.
 
+### ✅ D7 — the `data-d` attribute (resolved 2026-09-11)
+
+It marked a **demo student**. The academy's answer: ignore it. So the flag is
+deliberately not migrated, and nothing needs to change.
+
+`roster-footer.tsx` writes `data-d="d"` on every entry unconditionally, which is
+what renders the roster in the accent colour and matches the original for 15 of
+16 students. Left as it is: it preserves the look `check:render` asserts. Now
+that the meaning is known and dismissed, the attribute is decorative — it could
+be dropped along with the `li[data-d="d"]` rule in `globals.css` if the academy
+would rather the roster used the default colour, but that is a visual choice,
+not an open question.
+
 ## What is genuinely not done
 
 ### ⚠️ The suites cannot be run against Atlas, by design
@@ -167,16 +180,6 @@ proves the app's SSE wiring consumes them.
 What is still untested is only the two composed in production: two browsers open
 on the deployed site, an edit in one appearing in the other. Worth one look. The
 connection badge must not read "Live updates unavailable".
-
-### ⏳ D7 — the `data-d` attribute
-
-The original footer marked every student `data-d="d"` (rendered in the accent
-colour) **except Surajit Paul**, whose `data-d=""` rendered in the default
-colour. The flag is undocumented and its meaning unknown, so it was not
-migrated — all roster entries currently render in the accent colour, matching 15
-of the 16.
-
-Nothing is broken by this. It needs someone who knows what the flag meant.
 
 ### ⚠️ Deployment-time unknowns
 

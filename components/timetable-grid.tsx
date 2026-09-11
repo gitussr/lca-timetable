@@ -39,9 +39,11 @@ export default function TimetableGrid({
   onPick: (target: EditTarget) => void;
 }) {
   const { cells } = buildGrid(settings, students, schedules, courses);
-  const { today, liveRangeId } = now
+  const { today, liveRangeIds } = now
     ? findNow(settings, now)
-    : { today: null, liveRangeId: null };
+    : { today: null, liveRangeIds: [] as string[] };
+  // Overlapping ranges mean more than one column can be live at once.
+  const live = new Set(liveRangeIds);
 
   // Drives the CSS grid at every breakpoint without touching the media queries.
   const gridVars = {
@@ -75,7 +77,7 @@ export default function TimetableGrid({
           isToday={day === today}
           settings={settings}
           cells={cells}
-          liveRangeId={liveRangeId}
+          live={live}
           editing={editing}
           onPick={onPick}
         />
@@ -89,7 +91,7 @@ function Row({
   isToday,
   settings,
   cells,
-  liveRangeId,
+  live,
   editing,
   onPick,
 }: {
@@ -97,7 +99,7 @@ function Row({
   isToday: boolean;
   settings: SettingsWire;
   cells: ReturnType<typeof buildGrid>['cells'];
-  liveRangeId: string | null;
+  live: Set<string>;
   editing: boolean;
   onPick: (target: EditTarget) => void;
 }) {
@@ -110,7 +112,7 @@ function Row({
 
         const classes = ['slot'];
         if (isToday) classes.push('is-today-col');
-        if (isToday && range.id === liveRangeId) classes.push('is-live');
+        if (isToday && live.has(range.id)) classes.push('is-live');
 
         // Pad to capacity so every row keeps its share of the cell height,
         // exactly as the legacy empty <li> elements did.

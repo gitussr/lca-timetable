@@ -81,20 +81,31 @@ export function buildGrid(
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const;
 
 /**
- * Which day column is today, and which cell is "live" (§4's is-today / is-live).
+ * Which day column is today, and which cells are "live" (§4's is-today /
+ * is-live).
  *
  * The legacy version indexed with `allSlots[dayIndex * 4 + i]` against a
  * hard-coded four-entry timeSlots array, so a fifth column silently mis-marked
  * the live cell rather than failing visibly. This resolves against the ranges
  * themselves, so it stays correct for any number of columns.
+ *
+ * **Live is plural.** The legacy grid had four columns that did not overlap, so
+ * exactly one could be current. Resolving D2 turned the `(5pm)` labels into real
+ * ranges, and those overlap: at 17:45 on a Saturday, `16:00-18:00`,
+ * `17:00-18:30` and `17:30-19:00` are all genuinely in progress. Returning the
+ * first match left the later columns unmarked while a class was running in them
+ * (2026-09-11).
+ *
+ * The fallback — nothing running, so point at what is next — is plural for the
+ * same reason: two ranges can share a start time.
  */
 export function findNow(
   settings: SettingsWire,
   now: Date,
-): { today: string | null; liveRangeId: string | null } {
+): { today: string | null; liveRangeIds: string[] } {
   const today = DAY_NAMES[now.getDay()] ?? null;
   if (!today || !settings.days.includes(today)) {
-    return { today: null, liveRangeId: null };
+    return { today: null, liveRangeIds: [] };
   }
 
   const minutes = now.getHours() * 60 + now.getMinutes();
@@ -102,19 +113,19 @@ export function findNow(
     (a, b) => toMinutes(a.startTime) - toMinutes(b.startTime),
   );
 
-  // A class happening right now wins.
-  for (const r of ranges) {
-    if (minutes >= toMinutes(r.startTime) && minutes < toMinutes(r.endTime)) {
-      return { today, liveRangeId: r.id };
-    }
-  }
-  // Otherwise highlight the next one due, as the legacy behaviour did.
-  for (const r of ranges) {
-    if (minutes < toMinutes(r.startTime)) {
-      return { today, liveRangeId: r.id };
-    }
-  }
-  return { today, liveRangeId: null };
+  // Every class happening right now, not merely the first one found.
+  const running = ranges.filter(
+    (r) => minutes >= toMinutes(r.startTime) && minutes < toMinutes(r.endTime),
+  );
+  if (running.length) return { today, liveRangeIds: running.map((r) => r.id) };
+
+  // Otherwise point at what is due next, as the legacy behaviour did — and at
+  // all of them, if several start together.
+  const upcoming = ranges.filter((r) => minutes < toMinutes(r.startTime));
+  const soonest = upcoming[0];
+  if (!soonest) return { today, liveRangeIds: [] };
+  const at = toMinutes(soonest.startTime);
+  return { today, liveRangeIds: upcoming.filter((r) => toMinutes(r.startTime) === at).map((r) => r.id) };
 }
 
 /**
