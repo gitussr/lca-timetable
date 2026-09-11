@@ -37,7 +37,7 @@ the CSS, not screenshotted. Worth one look on a real phone.
 
 | | Item | Evidence |
 |---|---|---|
-| ✅ | MongoDB Atlas stores application data | ⏳ verified against a local replica set; Atlas awaits the credential |
+| ✅ | MongoDB Atlas stores application data | Live on Atlas — replica set `atlas-xgye96-shard-0`, 9 indexes, seeded 16/41/2. ⚠️ the suites still run against a local mongod — see below |
 | ✅ | MongoDB credentials are server-side only | `check:bundle` greps the built client assets |
 | ✅ | Students / courses / timetable / footer are database-driven | `check:render` — no legacy data left in the markup |
 | ✅ | Course month numbers preserved | `check:render` — footer entries match character for character |
@@ -74,7 +74,7 @@ the CSS, not screenshotted. Worth one look on a real phone.
 | ✅ | Local development works | This is how everything above was tested |
 | ✅ | README updated | `README.md` |
 | ✅ | No secrets committed | `.gitignore` covers `.env*` and `master-prompt.md`; every phase ended with a credential sweep |
-| ⚠️ | **Vercel deployment works** | Deployed and live 2026-09-11 — builds, renders, serves `/login`, rejects `/api/me` with 401. Cannot reach the database — see below |
+| ✅ | **Vercel deployment works** | Live 2026-09-11 at `lca-timetable-web-devs-projects-d28f23dd.vercel.app` — builds in ~31s, connects to Atlas, seeded, admin created, sign-in reaches the database |
 
 ---
 
@@ -91,14 +91,10 @@ The decision lives in `RESOLUTIONS` in `scripts/extract-legacy.ts`, not in
 would be silently undone. No entry awaits review, `seed` no longer refuses to
 run, and **the seed data is authoritative**.
 
-## What is genuinely not done
+### ✅ Atlas Network Access (resolved 2026-09-11)
 
-### ⏳ Atlas Network Access — the one thing between here and a working site
-
-The deployment is live at
-`https://lca-timetable-web-devs-projects-d28f23dd.vercel.app`. It builds,
-renders, and enforces its own auth. **Every database call fails**, from Vercel
-and from a developer machine alike, with the same error:
+Every database call used to fail, from Vercel and from a developer machine
+alike, with the same error:
 
 ```
 MongoServerSelectionError: ... tlsv1 alert internal error ... SSL alert number 80
@@ -110,11 +106,39 @@ the access list — it is not DNS (the SRV record resolves to three nodes of
 replica set `atlas-xgye96-shard-0`), not the credential (authentication happens
 after TLS), and not a corporate proxy (one would present its own certificate).
 
-**Remaining work:** Atlas → Network Access → Add IP Address → **Allow Access
-from Anywhere (`0.0.0.0/0`)**. Vercel functions have no fixed IPs, so this is
-the usual answer; it makes the database password the only thing protecting the
-data. Then, from a machine with the production values in `.env.local`:
-`ensure-indexes`, `seed`, `create:admin`.
+Fixed by allowing `0.0.0.0/0` — Vercel functions have no fixed IPs. It takes
+about a minute to go Active; the first connection attempt after saving still
+failed, the next one succeeded.
+
+**This makes the database password the only thing protecting the data**, which
+is why the item below matters more than it did before.
+
+A second failure hid behind this one and outlived it: `lib/db.ts` cached the
+connection *promise*, rejected ones included, so the instance that started while
+the access list was closed kept re-throwing that first failure and never
+retried. Opening the list changed nothing until that was fixed. See the commit
+"Never cache a rejected connection promise".
+
+## What is genuinely not done
+
+### ⚠️ The suites cannot be run against Atlas, by design
+
+`reset-test-db` drops a database, so it carries two guards: the name must
+contain `test`, **and** the host must not be Atlas ("Refusing to run against an
+Atlas cluster. Use a local mongod."). Attempted on 2026-09-11 with
+`MONGODB_DB=lca_test` and refused at the second guard — correctly.
+
+So `api`, `edge`, `render`, `security` and `themes` remain verified against a
+local replica set, not against Atlas. `schemas` (42) and `bundle` (9) need no
+database and were re-run green after the connection fix. Production document
+counts were recorded before and after the attempt and are identical; no
+`lca_test` database was created.
+
+What this leaves genuinely unverified on Atlas: **realtime**. Change streams
+need a replica set, and this cluster is one, so the mechanism is present — but
+nobody has yet watched two browsers sync on the deployed site. That is the
+first thing to check after signing in; the connection badge must not read
+"Live updates unavailable".
 
 ### ⏳ The leaked credential is still in use
 
