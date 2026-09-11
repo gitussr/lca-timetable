@@ -124,7 +124,8 @@ function checkStream(): void {
     good('STREAM_LIFETIME_SECONDS unset — defaults to 240s');
     warn(
       'Confirm your hosting plan allows a 300s function before relying on that default.',
-      'If it caps lower, set STREAM_LIFETIME_SECONDS below the cap and lower maxDuration in vercel.json.',
+      'If it caps lower, set STREAM_LIFETIME_SECONDS below the cap and lower the ' +
+        'maxDuration export in app/api/stream/route.ts.',
     );
     return;
   }
@@ -134,12 +135,12 @@ function checkStream(): void {
     return;
   }
 
-  const vercelJson = join(process.cwd(), 'vercel.json');
-  if (existsSync(vercelJson)) {
-    const cfg = JSON.parse(readFileSync(vercelJson, 'utf8')) as {
-      functions?: Record<string, { maxDuration?: number }>;
-    };
-    const max = cfg.functions?.['app/api/stream/route.ts']?.maxDuration;
+  // maxDuration is declared by the route itself, the way the App Router expects.
+  // A vercel.json `functions` glob is the wrong tool here and fails the build.
+  const route = join(process.cwd(), 'app', 'api', 'stream', 'route.ts');
+  if (existsSync(route)) {
+    const declared = /^export const maxDuration = (\d+)/m.exec(readFileSync(route, 'utf8'));
+    const max = declared ? Number(declared[1]) : undefined;
     if (max && seconds >= max) {
       fail(
         'STREAM_LIFETIME_SECONDS (' + seconds + ') is not below maxDuration (' + max + ').',

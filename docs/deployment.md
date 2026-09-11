@@ -73,7 +73,15 @@ git grep --cached -iE "mongodb\+srv://[a-z]+:[^@]*@"   # must print nothing
 ## 4. Vercel
 
 Import the repository. Next.js is detected automatically; the defaults are
-correct. `vercel.json` only sets the streaming route's duration.
+correct, and the project needs **no `vercel.json`** — the one thing it used to
+carry (the streaming route's duration) belongs in the route itself.
+
+> **If the build fails instantly with "The pattern ... doesn't match any
+> Serverless Functions inside the `api` directory":** something has reintroduced
+> a `functions` glob in `vercel.json`. App Router routes set their own
+> `maxDuration` by exporting it; a `functions` pattern aimed at
+> `app/api/**/route.ts` does not match and fails the build before it starts.
+> This cost two deployments on 2026-09-10.
 
 Deploy, then immediately:
 
@@ -86,12 +94,13 @@ npm run preflight        # against the production values
 `/api/stream` holds a connection open and recycles it deliberately, so the
 platform never kills it mid-flight. Two numbers must agree:
 
-- `maxDuration` in `vercel.json` — currently **300** seconds
+- `maxDuration` exported from `app/api/stream/route.ts` — currently **300** seconds
 - `STREAM_LIFETIME_SECONDS` — defaults to **240**, and must be lower
 
 **Check your plan's function duration limit before relying on those defaults.**
 If your plan caps functions below 300s, lower both — for example a 60s cap wants
-`maxDuration: 55` and `STREAM_LIFETIME_SECONDS=45`.
+`export const maxDuration = 55` and `STREAM_LIFETIME_SECONDS=45`. `npm run
+preflight` reads the export and fails if the two numbers disagree.
 
 Getting it wrong is not catastrophic: the connection dies at the platform limit
 instead of recycling cleanly, and the client reconnects with its resume token, so

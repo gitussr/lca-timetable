@@ -117,9 +117,9 @@ Nothing is broken by this. It needs someone who knows what the flag meant.
 
 - **Function duration limits vary by hosting plan**, and I could not confirm the
   per-plan cap from the documentation available. `STREAM_LIFETIME_SECONDS` and
-  `vercel.json`'s `maxDuration` are both configurable; `docs/deployment.md` §5
-  says what to check and what happens if it is wrong (a slightly less tidy
-  reconnect, not lost data).
+  the `maxDuration` export in `app/api/stream/route.ts` are both configurable;
+  `docs/deployment.md` §5 says what to check and what happens if it is wrong (a
+  slightly less tidy reconnect, not lost data).
 - **Atlas Network Access** will likely need `0.0.0.0/0`, since Vercel functions
   have no fixed IPs. That makes the database password the only thing protecting
   the data.

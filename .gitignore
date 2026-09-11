@@ -34,3 +34,6 @@ yarn-error.log*
 # Once the credential is rotated AND redacted from this file, it is safe to
 # remove this rule and commit the brief as project documentation.
 master-prompt.md
+
+# Vercel CLI link metadata.
+.vercel
