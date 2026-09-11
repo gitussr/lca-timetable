@@ -64,12 +64,27 @@ function checkMongo(): void {
     return;
   }
   const { user, host } = identify(uri);
-  if (digest(user) === LEAKED_USER_DIGEST || digest(host) === LEAKED_HOST_DIGEST) {
+  const leakedUser = digest(user) === LEAKED_USER_DIGEST;
+  const leakedHost = digest(host) === LEAKED_HOST_DIGEST;
+
+  // Both halves, not either. The cluster hostname is not a secret — a brand-new
+  // user on that cluster is a legitimate rotation, and failing it would leave no
+  // way to pass this check short of rebuilding the cluster. It is the *account*
+  // that was published.
+  if (leakedUser && leakedHost) {
     fail(
-      'MONGODB_URI points at the account published in master-prompt.md.',
-      'Rotate it in Atlas and use the new credential. See docs/phase-1-assessment.md §0.',
+      'MONGODB_URI still names the database user published in master-prompt.md.',
+      'The password may have been changed, but this check cannot see the password ' +
+        'and the username is public. Create a NEW database user in Atlas, delete ' +
+        'the old one, and use the new credential. See docs/phase-1-assessment.md §0.',
     );
     return;
+  }
+  if (leakedHost) {
+    warn(
+      'MONGODB_URI points at the cluster from master-prompt.md, under a different user.',
+      'Fine if the published user has been deleted — confirm it has, in Atlas → Database Access.',
+    );
   }
 
   // Report the host only — never the credentials in front of it.
