@@ -134,11 +134,16 @@ database and were re-run green after the connection fix. Production document
 counts were recorded before and after the attempt and are identical; no
 `lca_test` database was created.
 
-What this leaves genuinely unverified on Atlas: **realtime**. Change streams
-need a replica set, and this cluster is one, so the mechanism is present — but
-nobody has yet watched two browsers sync on the deployed site. That is the
-first thing to check after signing in; the connection badge must not read
-"Live updates unavailable".
+What this left unverified on Atlas was **realtime**, and it has since been
+verified at the database layer directly: a `db.watch()` against the production
+cluster — the same call `/api/stream` makes — delivered an insert event in
+**422ms** with a resume token, and the probe collection was dropped afterwards.
+So the cluster delivers change events to this credential, and `check:edge`
+proves the app's SSE wiring consumes them.
+
+What is still untested is only the two composed in production: two browsers open
+on the deployed site, an edit in one appearing in the other. Worth one look. The
+connection badge must not read "Live updates unavailable".
 
 ### ⏳ The leaked credential is still in use
 
