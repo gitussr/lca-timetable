@@ -181,6 +181,32 @@ What is still untested is only the two composed in production: two browsers open
 on the deployed site, an edit in one appearing in the other. Worth one look. The
 connection badge must not read "Live updates unavailable".
 
+### ✅ Sign-in latency (measured and fixed 2026-09-11)
+
+Signing in took about ten seconds. The cause was geography, not code: the Atlas
+cluster is in **Mumbai** and the functions ran in **iad1, Washington D.C.**, so
+every database round trip crossed an ocean — and sign-in makes three sequential
+ones before it can answer, on a connection that may itself be cold.
+
+| | before | after |
+|---|---|---|
+| login POST, cold | 3.30s | **1.18s** |
+| login POST, warm | ~1.52–1.82s | **~0.73s** |
+| `/api/auth/csrf` (no DB, no bcrypt) | 0.44s | **~0.29s** |
+| `/login` render, warm | ~0.47s | **~0.29s** |
+
+Two changes. `regions: ["bom1"]` in `vercel.json` co-locates the functions with
+the cluster — confirmed by `X-Vercel-Id: bom1::bom1::`. And `DUMMY_HASH` stopped
+being computed by `bcrypt.hashSync` at module load, which ran a full cost-12
+hash on every cold start to produce a value that never changes.
+
+What remains is mostly bcrypt at cost 12, which is the deliberate price of the
+thing bcrypt exists to do. `HASH_ROUNDS` was left alone: it was never where the
+ten seconds were.
+
+⚠️ **The region is now pinned to Mumbai.** If the cluster is ever moved, move
+this with it, or the latency comes straight back.
+
 ### ⚠️ Deployment-time unknowns
 
 - **Function duration limits vary by hosting plan**, and I could not confirm the
