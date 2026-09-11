@@ -5,6 +5,7 @@ import { api, describe, type ApiResult } from './api-client';
 import type { TimetableData } from './timetable-data';
 import type { CourseWire, ScheduleWire, SettingsWire, StudentWire } from './serialize';
 import type { TimeRange } from './types';
+import { commitInsert } from './merge';
 
 /**
  * Timetable state and every mutation that touches it.
@@ -23,27 +24,6 @@ export type SaveState =
   | { kind: 'saving' }
   | { kind: 'saved' }
   | { kind: 'error'; message: string };
-
-/**
- * Folds a server-confirmed insert into a list.
- *
- * The optimistic row, if there was one, is dropped and the real document
- * upserted by id — never mapped temp -> real in place. The realtime echo of our
- * own insert can arrive BEFORE the HTTP response that created it, in which case
- * the echo has already appended the real document; mapping would then leave it
- * in the list twice, under the same id.
- *
- * That is exactly what happened on 2026-09-11: a student created in one browser
- * appeared twice in that browser and once in every other. Only the author of an
- * edit can hit it, and only when the stream beats the response, which is why it
- * looked intermittent.
- */
-function commitInsert<T extends { id: string }>(list: T[], doc: T, tempId?: string): T[] {
-  const rest = tempId ? list.filter((x) => x.id !== tempId) : list;
-  return rest.some((x) => x.id === doc.id)
-    ? rest.map((x) => (x.id === doc.id ? doc : x))
-    : [...rest, doc];
-}
 
 export function useTimetable(initial: TimetableData) {
   const [data, setData] = useState<TimetableData>(initial);

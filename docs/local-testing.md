@@ -152,7 +152,7 @@ npm run check:all
 
 `check:all` resets the database before each suite that mutates it, so the
 suites cannot poison each other. Individual suites still run alone:
-`check:schemas`, `check:render`, `check:themes`, `check:api`, `check:security`,
+`check:schemas`, `check:merge`, `check:render`, `check:themes`, `check:api`, `check:security`,
 `check:edge`, `check:bundle`.
 
 ### The bundle check runs separately

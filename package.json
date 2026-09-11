@@ -16,6 +16,7 @@
     "create:admin": "tsx --env-file-if-exists=.env.local scripts/create-admin.ts",
     "check:schemas": "tsx scripts/check-schemas.ts",
     "ensure-indexes": "tsx --env-file-if-exists=.env.local scripts/ensure-indexes.ts",
+    "check:merge": "tsx scripts/check-merge.ts",
     "check:api": "tsx scripts/check-api.ts",
     "test:reset": "tsx --env-file-if-exists=.env.local scripts/reset-test-db.ts",
     "check:render": "tsx scripts/check-render.ts",

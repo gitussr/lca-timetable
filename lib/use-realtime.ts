@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import type { CourseWire, ScheduleWire, SettingsWire, StudentWire } from './serialize';
 import type { TimetableData } from './timetable-data';
 import type { StreamEvent } from './realtime';
+import { applyChange } from './merge';
 
 export type ConnectionState = 'connecting' | 'live' | 'polling' | 'offline';
 
@@ -133,74 +133,4 @@ export function useRealtime({
   }, [enabled]);
 
   return state;
-}
-
-/**
- * Folds one change into the dataset.
- *
- * Upserts replace by id, so an edit made in this browser and echoed back is a
- * no-op rather than a duplicate. Optimistic rows carry a `temp-` id that no
- * server document can collide with, so a locally pending insert and its own
- * echo coexist for a moment.
- *
- * Resolving that pair is the commit's job, and it must *upsert* the real
- * document rather than rename the temp row — see `commitInsert` in
- * use-timetable.ts. When this echo wins the race against the HTTP response, the
- * real document is already here by the time the commit runs.
- */
-function applyChange(d: TimetableData, event: Extract<StreamEvent, { kind: 'change' }>): TimetableData {
-  switch (event.coll) {
-    case 'students': {
-      if (event.op === 'delete') {
-        return {
-          ...d,
-          students: d.students.filter((s) => s.id !== event.id),
-          // A removed student's classes go with them (§22).
-          schedules: d.schedules.filter((s) => s.studentId !== event.id),
-        };
-      }
-      const doc = event.doc as StudentWire;
-      const exists = d.students.some((s) => s.id === doc.id);
-      return {
-        ...d,
-        students: exists
-          ? d.students.map((s) => (s.id === doc.id ? doc : s))
-          : [...d.students, doc],
-      };
-    }
-
-    case 'schedules': {
-      if (event.op === 'delete') {
-        return { ...d, schedules: d.schedules.filter((s) => s.id !== event.id) };
-      }
-      const doc = event.doc as ScheduleWire;
-      const exists = d.schedules.some((s) => s.id === doc.id);
-      return {
-        ...d,
-        schedules: exists
-          ? d.schedules.map((s) => (s.id === doc.id ? doc : s))
-          : [...d.schedules, doc],
-      };
-    }
-
-    case 'courses': {
-      if (event.op === 'delete') {
-        return { ...d, courses: d.courses.filter((c) => c.id !== event.id) };
-      }
-      const doc = event.doc as CourseWire;
-      const exists = d.courses.some((c) => c.id === doc.id);
-      return {
-        ...d,
-        courses: exists ? d.courses.map((c) => (c.id === doc.id ? doc : c)) : [...d.courses, doc],
-      };
-    }
-
-    case 'settings': {
-      if (event.op === 'delete') return d;
-      return { ...d, settings: event.doc as SettingsWire, seeded: true };
-    }
-
-    default:
-      return d;
-  }
 }

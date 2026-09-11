@@ -63,8 +63,8 @@ the CSS, not screenshotted. Worth one look on a real phone.
 | | Item | Evidence |
 |---|---|---|
 | ✅ | Multiple users can edit simultaneously | `check:edge` |
-| ✅ | Realtime updates work | `check:edge` opens an SSE stream and reads the event off the wire |
-| ✅ | Concurrent edits handled safely | 409 with the winning state; verified for students *and* schedules |
+| ✅ | Realtime updates work | `check:edge` opens an SSE stream and reads the event off the wire; confirmed in production with two browsers 2026-09-11 |
+| ✅ | Concurrent edits handled safely | 409 with the winning state; verified for students *and* schedules. `check:merge` (20) asserts an insert and its own realtime echo converge in **either** arrival order |
 | ✅ | Audit information recorded | `check:api` |
 
 ## Delivery
