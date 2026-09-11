@@ -39,7 +39,7 @@ Set these in **Vercel → Project → Settings → Environment Variables**:
 | `MONGODB_URI` | Production, Preview | The rotated credential. Never `NEXT_PUBLIC_`. |
 | `MONGODB_DB` | Production, Preview | Different value per environment. |
 | `AUTH_SECRET` | Production, Preview | `openssl rand -base64 32`. Different per environment. |
-| `AUTH_URL` | Production, Preview | The full `https://` origin. |
+| `AUTH_URL` | Production only | The full `https://` origin — currently `https://lca-timetable.vercel.app`. Leave it **unset on Preview**: preview URLs change per deployment, and `auth.ts` sets `trustHost: true`, so Auth.js infers the origin there. |
 | `STREAM_LIFETIME_SECONDS` | optional | See §5 below. |
 
 Then verify locally against the same values:

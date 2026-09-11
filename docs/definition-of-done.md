@@ -74,7 +74,7 @@ the CSS, not screenshotted. Worth one look on a real phone.
 | ✅ | Local development works | This is how everything above was tested |
 | ✅ | README updated | `README.md` |
 | ✅ | No secrets committed | `.gitignore` covers `.env*` and `master-prompt.md`; every phase ended with a credential sweep |
-| ✅ | **Vercel deployment works** | Live 2026-09-11 at `lca-timetable-web-devs-projects-d28f23dd.vercel.app` — builds in ~31s, connects to Atlas, seeded, admin created, sign-in reaches the database |
+| ✅ | **Vercel deployment works** | Live 2026-09-11 at `lca-timetable.vercel.app` — builds in ~31s, connects to Atlas, seeded, admin created, sign-in reaches the database |
 
 ---
 
