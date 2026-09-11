@@ -141,7 +141,12 @@ export function useRealtime({
  * Upserts replace by id, so an edit made in this browser and echoed back is a
  * no-op rather than a duplicate. Optimistic rows carry a `temp-` id that no
  * server document can collide with, so a locally pending insert and its own
- * echo coexist for the moment before the commit swaps them.
+ * echo coexist for a moment.
+ *
+ * Resolving that pair is the commit's job, and it must *upsert* the real
+ * document rather than rename the temp row — see `commitInsert` in
+ * use-timetable.ts. When this echo wins the race against the HTTP response, the
+ * real document is already here by the time the commit runs.
  */
 function applyChange(d: TimetableData, event: Extract<StreamEvent, { kind: 'change' }>): TimetableData {
   switch (event.coll) {
