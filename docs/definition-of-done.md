@@ -119,6 +119,26 @@ the access list was closed kept re-throwing that first failure and never
 retried. Opening the list changed nothing until that was fixed. See the commit
 "Never cache a rejected connection promise".
 
+### ✅ The published credential is retired (2026-09-11)
+
+The database user printed in `master-prompt.md` §1 has been **deleted** in
+Atlas, and a new user created. `MONGODB_URI` was updated in `.env.local` and in
+both Vercel environments, and production redeployed.
+
+Verified rather than assumed: the old credential now fails authentication
+(`AtlasError`, reached only *after* TLS — the signature of a user that no longer
+exists); the new one connects, reads and writes; the data is unchanged at 16
+students, 41 schedules, 2 courses and 1 admin; and the live site's sign-in
+reaches the database and correctly rejects an unknown account.
+
+`npm run preflight` reports **no problems** for the first time. It still warns
+that the cluster is the one named in `master-prompt.md`, under a different user
+— correct, and harmless now that the published user is gone.
+
+What remains true: the cluster is open to `0.0.0.0/0`, so the new password is
+the only thing protecting the data. It has never been written down outside
+`.env.local` and the Vercel environment.
+
 ## What is genuinely not done
 
 ### ⚠️ The suites cannot be run against Atlas, by design
@@ -144,18 +164,6 @@ proves the app's SSE wiring consumes them.
 What is still untested is only the two composed in production: two browsers open
 on the deployed site, an edit in one appearing in the other. Worth one look. The
 connection badge must not read "Live updates unavailable".
-
-### ⏳ The leaked credential is still in use
-
-`MONGODB_URI` still names the database user named in `master-prompt.md` §1 —
-and that name is therefore public. The password has been changed; the
-username has not. **Deferred deliberately by the academy on 2026-09-11** to get
-the site live first.
-
-Closing it means creating a *new* database user in Atlas, deleting the published
-one, and updating `MONGODB_URI` in both `.env.local` and the Vercel project
-(Production and Preview). `npm run preflight` fails until this is done, and says
-so in those terms.
 
 ### ⏳ D7 — the `data-d` attribute
 

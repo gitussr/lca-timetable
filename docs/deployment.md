@@ -3,9 +3,10 @@
 GitHub → Vercel → MongoDB Atlas. The seven items §50 asks to document, in the
 order you actually do them.
 
-> **Before anything else:** the MongoDB credential printed in
-> `master-prompt.md` §1 is compromised by having been written down. Rotate it.
-> `npm run preflight` refuses that specific credential by name.
+> **Done, 2026-09-11:** the MongoDB user printed in `master-prompt.md` §1 was
+> compromised by having been written down. It has been deleted in Atlas and
+> replaced. `npm run preflight` still refuses that specific user by name, so
+> this stays as a guard against anyone pasting the old string back in.
 
 ---
 
