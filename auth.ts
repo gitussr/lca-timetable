@@ -31,13 +31,33 @@ import type { Role, Theme } from '@/lib/constants';
 const REMEMBER_MAX_AGE = 60 * 60 * 24 * 30; // 30 days
 const SESSION_MAX_AGE = 60 * 60 * 12; //  12 hours
 
+export const HASH_ROUNDS = 12;
+
 /**
  * Compared against when no user matches, so a wrong email and a wrong password
  * take the same time. Without it, response latency enumerates valid accounts.
  * Cost must match HASH_ROUNDS or the timing signal comes back.
+ *
+ * A literal, not `bcrypt.hashSync(...)`. Computing it ran a full cost-12 hash
+ * at MODULE LOAD — on every cold start of every function that imports this
+ * file, before it could serve anything, to produce a value that never varies.
+ * bcryptjs is the pure-JS implementation, so that was ~350ms on a desktop and
+ * more on a function core (2026-09-11). A constant costs nothing and equalises
+ * exactly as well: its only job is to be a valid hash of the right cost.
+ *
+ * It is the hash of 'timing-equalisation-placeholder', which is not a password
+ * and guards nothing.
  */
-export const HASH_ROUNDS = 12;
-const DUMMY_HASH = bcrypt.hashSync('timing-equalisation-placeholder', HASH_ROUNDS);
+const DUMMY_HASH = '$2b$12$zb1LNyQNlnZIYjNwlH0tiekWSWGXllBVJbAQvQxSvohY6FKiEWAiG';
+
+// Cheap string check, not a hash: if HASH_ROUNDS moves and the literal does not,
+// the unknown-account path gets faster than the known one and starts leaking.
+if (Number(DUMMY_HASH.split('$')[2]) !== HASH_ROUNDS) {
+  throw new Error(
+    'DUMMY_HASH cost ' + DUMMY_HASH.split('$')[2] + ' no longer matches HASH_ROUNDS ' +
+      HASH_ROUNDS + ' — regenerate it, or the login timing enumerates accounts.',
+  );
+}
 
 /** Auth.js surfaces `code` to the client; keep it generic (§30, §43). */
 class InvalidCredentials extends CredentialsSignin {
