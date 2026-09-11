@@ -88,17 +88,6 @@ export default function TimetableApp({
       */}
       {canEdit && (
         <div className="edit-switcher">
-          {editing && isAdmin && (
-            <button
-              type="button"
-              className="edit-fab"
-              aria-label="Accounts"
-              title="Accounts"
-              onClick={() => setUsersOpen(true)}
-            >
-              <i className="bi bi-people" aria-hidden="true" />
-            </button>
-          )}
           {editing && (
             <button
               type="button"
@@ -139,7 +128,12 @@ export default function TimetableApp({
         </div>
       )}
 
-      <AppHeader emptySeats={seats} userName={userName} />
+      <AppHeader
+        emptySeats={seats}
+        userName={userName}
+        isAdmin={isAdmin}
+        onOpenAccounts={() => setUsersOpen(true)}
+      />
 
       {!data.seeded && (
         <p style={{ color: 'var(--text-dim)', fontSize: 13, margin: '8px 0' }}>

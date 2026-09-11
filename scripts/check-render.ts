@@ -210,6 +210,12 @@ async function main(): Promise<void> {
   // spans forward into the header's new button and reports a false failure.
   ok('the theme panel no longer carries a sign-out control', !html.includes('logout-btn'));
 
+  // Both live in the header, reachable without entering edit mode. Accounts was
+  // behind admin -> edit mode -> people icon and was reported missing.
+  ok('accounts is in the header for an admin',
+    /<header[\s\S]*?>Accounts<[\s\S]*?<\/header>/.test(html));
+  ok('accounts is not hidden behind edit mode', !html.includes('aria-label="Accounts"'));
+
   console.log('--- footer is one source of truth (§19, §20) ---');
   {
     // Every name in the footer must be a name the grid knows about, and the

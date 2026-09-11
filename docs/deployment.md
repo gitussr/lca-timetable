@@ -140,10 +140,14 @@ public deployment is the same problem as the `LCA1234` access code this
 migration removed.
 
 Further accounts can be made the same way (`-- --role=editor`), or — from
-2026-09-11 — in the app itself: sign in as an admin, enter edit mode, and open
-**Accounts** (the people icon beside the settings button). That panel is the
-only way to create an account without shell access to the production
-credentials; there is deliberately no sign-up page.
+2026-09-11 — in the app itself: sign in as an admin and click **Accounts** in
+the header. That panel is the only way to create an account without shell
+access to the production credentials.
+
+**There is deliberately no sign-up page.** Accounts exist because an admin made
+one. A public form on a timetable would let anyone who finds the URL read the
+schedule and the students' names — the exposure the `LCA1234` access code used
+to create, and the reason this migration removed it.
 
 ---
 

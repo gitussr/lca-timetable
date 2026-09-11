@@ -26,11 +26,26 @@ function formatClock(date: Date): string {
  * palette button and below a divider — present, tested, and effectively
  * undiscoverable. It reads as a missing feature, which is how it was reported.
  *
+ * Accounts sits here for the same reason. It was first put beside the timetable
+ * settings, which meant admin → edit mode → people icon: three steps to reach
+ * the only way to add a colleague, and it was reported missing too. Managing
+ * people is not editing the timetable, so it does not belong behind edit mode.
+ *
  * The clock renders blank on the server and fills in on mount. Rendering a
  * server timestamp would hydrate against a different client second and throw a
  * mismatch — and the server's timezone is not the academy's anyway.
  */
-export default function AppHeader({ emptySeats, userName }: { emptySeats: number; userName: string }) {
+export default function AppHeader({
+  emptySeats,
+  userName,
+  isAdmin,
+  onOpenAccounts,
+}: {
+  emptySeats: number;
+  userName: string;
+  isAdmin: boolean;
+  onOpenAccounts: () => void;
+}) {
   const [now, setNow] = useState<Date | null>(null);
 
   useEffect(() => {
@@ -61,6 +76,17 @@ export default function AppHeader({ emptySeats, userName }: { emptySeats: number
             </>
           )}
         </div>
+        {isAdmin && (
+          <button
+            type="button"
+            className="header-signout"
+            title="Add and manage accounts"
+            onClick={onOpenAccounts}
+          >
+            <i className="bi bi-people" aria-hidden="true" />
+            <span>Accounts</span>
+          </button>
+        )}
         <button
           type="button"
           className="header-signout"

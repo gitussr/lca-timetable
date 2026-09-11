@@ -148,6 +148,36 @@ async function main(): Promise<void> {
   ok('fallback defers to a server-set attribute',
     unthemed.includes("hasAttribute('data-theme')"));
 
+  /*
+   * The login screen's fields must all be styled, not merely the one the legacy
+   * page happened to have.
+   *
+   * The legacy screen had a single input - the LCA1234 "Access code" - so every
+   * rule was written as `#passwordInput`. Adding the email field left it with
+   * the browser's default chrome: a white box on a dark card, reported twice
+   * before it was fixed (2026-09-11). Nothing failed; it just looked broken.
+   *
+   * So: every input inside `.input-wrap` must be covered by a shared rule, not
+   * by a rule keyed to one element's id.
+   */
+  console.log('--- login fields are all styled ---');
+  const loginHtml = await (await fetch(BASE + '/login')).text();
+  const wrapped = [...loginHtml.matchAll(/<div class="input-wrap">\s*<input[^>]*\bid="([^"]+)"/g)]
+    .map((m) => m[1]!);
+  ok('login has more than one styled field', wrapped.length >= 2, wrapped.join(', '));
+
+  const loginCss = /href="([^"]*\.css)"/.exec(loginHtml)?.[1];
+  ok('found the stylesheet', Boolean(loginCss), String(loginCss));
+  if (loginCss) {
+    const css = await (await fetch(BASE + loginCss)).text();
+    const shared = /\.input-wrap input\s*\{[^}]*background:/.test(css);
+    ok('a shared rule gives every wrapped input its background', shared);
+    for (const id of wrapped) {
+      ok('#' + id + ' is styled without needing its own id rule', shared);
+    }
+  }
+
+
   console.log('\n' + pass + ' passed, ' + fail + ' failed');
   if (failures.length) {
     console.log('\nfailures:');
