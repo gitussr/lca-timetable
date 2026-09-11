@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { signOut } from 'next-auth/react';
 
 /** `formatDateWithDay` from the legacy script.js, unchanged. */
 function formatDateWithDay(date: Date): string {
@@ -19,13 +20,17 @@ function formatClock(date: Date): string {
 }
 
 /**
- * The header bar: date, brand link, empty-seat count, live clock.
+ * The header bar: date, brand link, empty-seat count, live clock, sign out.
+ *
+ * Sign out lived in the theme panel until 2026-09-11, behind the floating
+ * palette button and below a divider — present, tested, and effectively
+ * undiscoverable. It reads as a missing feature, which is how it was reported.
  *
  * The clock renders blank on the server and fills in on mount. Rendering a
  * server timestamp would hydrate against a different client second and throw a
  * mismatch — and the server's timezone is not the academy's anyway.
  */
-export default function AppHeader({ emptySeats }: { emptySeats: number }) {
+export default function AppHeader({ emptySeats, userName }: { emptySeats: number; userName: string }) {
   const [now, setNow] = useState<Date | null>(null);
 
   useEffect(() => {
@@ -56,6 +61,15 @@ export default function AppHeader({ emptySeats }: { emptySeats: number }) {
             </>
           )}
         </div>
+        <button
+          type="button"
+          className="header-signout"
+          title={`Sign out of ${userName}'s account`}
+          onClick={() => void signOut({ callbackUrl: '/login' })}
+        >
+          <i className="bi bi-box-arrow-right" aria-hidden="true" />
+          <span>Sign out</span>
+        </button>
       </div>
     </header>
   );

@@ -202,7 +202,13 @@ async function main(): Promise<void> {
     ok('swatch ' + t + ' present', html.includes('data-swatch="' + t + '"'));
   }
   ok('theme panel heading', html.includes('>Theme<'));
-  ok('sign out lives in the theme panel', html.includes('Sign out'));
+  // Moved out of the theme panel on 2026-09-11 — it was present but nobody
+  // could find it. Asserting the location, not merely the words.
+  ok('sign out is in the header', /<header[\s\S]*?class="header-signout"[\s\S]*?<\/header>/.test(html));
+  // Asserted on the old control's class, not on the words "Sign out": the theme
+  // panel renders BEFORE the header, so a lazy [\s\S]*? between them happily
+  // spans forward into the header's new button and reports a false failure.
+  ok('the theme panel no longer carries a sign-out control', !html.includes('logout-btn'));
 
   console.log('--- footer is one source of truth (§19, §20) ---');
   {

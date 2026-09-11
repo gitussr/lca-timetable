@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { signOut } from 'next-auth/react';
 import { THEMES, type Theme } from '@/lib/constants';
 
 /** Labels are part of the design (§6) and must keep their exact wording. */
@@ -100,11 +99,6 @@ export default function ThemeSwitcher({ initialTheme }: { initialTheme: Theme | 
             {THEME_LABELS[theme]}
           </button>
         ))}
-        <div className="theme-panel-divider" />
-        {/* The legacy "Lock screen" cleared a localStorage flag; this ends a real session. */}
-        <button className="logout-btn" onClick={() => void signOut({ callbackUrl: '/login' })}>
-          <i className="bi bi-box-arrow-right" aria-hidden="true" /> Sign out
-        </button>
       </div>
     </div>
   );

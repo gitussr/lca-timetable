@@ -25,8 +25,8 @@ the CSS, not screenshotted. Worth one look on a real phone.
 
 | | Item | Evidence |
 |---|---|---|
-| ✅ | Login works | `check:security`, `check:edge` |
-| ✅ | Individual users exist | `create:admin`, `/api/users` |
+| ✅ | Login works | `check:security`, `check:edge`. Signing out is in the header from 2026-09-11 — it was in the theme panel, and was reported as missing |
+| ✅ | Individual users exist | `create:admin`, `/api/users`, and — from 2026-09-11 — the **Accounts** panel: admins add, re-role and deactivate people without shell access |
 | ✅ | RBAC works | `check:api` — every role × every endpoint |
 | ✅ | Admin / Editor / Viewer permissions | `check:api`, plus per-field settings permissions |
 | ✅ | Server-side authorization | `check:api` calls endpoints directly as an under-privileged user |

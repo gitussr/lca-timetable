@@ -139,8 +139,11 @@ Prompts for name, email and password with the password not echoed. There is
 public deployment is the same problem as the `LCA1234` access code this
 migration removed.
 
-Further accounts can be made the same way (`-- --role=editor`), or from the app
-once an admin exists.
+Further accounts can be made the same way (`-- --role=editor`), or — from
+2026-09-11 — in the app itself: sign in as an admin, enter edit mode, and open
+**Accounts** (the people icon beside the settings button). That panel is the
+only way to create an account without shell access to the production
+credentials; there is deliberately no sign-up page.
 
 ---
 

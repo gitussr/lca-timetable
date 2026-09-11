@@ -7,6 +7,7 @@ import RosterFooter from './roster-footer';
 import ThemeSwitcher from './theme-switcher';
 import CellEditor, { type EditTarget } from './cell-editor';
 import SettingsPanel from './settings-panel';
+import UsersPanel from './users-panel';
 import { emptySeats } from '@/lib/timetable-view';
 import { useTimetable } from '@/lib/use-timetable';
 import { useRealtime, type ConnectionState } from '@/lib/use-realtime';
@@ -26,19 +27,23 @@ export default function TimetableApp({
   preferredTheme,
   role,
   userId,
+  userName,
 }: {
   initial: TimetableData;
   preferredTheme: Theme | null;
   role: Role;
   userId: string;
+  userName: string;
 }) {
   const store = useTimetable(initial);
   const { data, save } = store;
 
   const canEdit = roleAtLeast(role, 'editor');
+  const isAdmin = roleAtLeast(role, 'admin');
   const [editing, setEditing] = useState(false);
   const [target, setTarget] = useState<EditTarget | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [usersOpen, setUsersOpen] = useState(false);
   const [remoteEditor, setRemoteEditor] = useState<string | null>(null);
 
   /**
@@ -83,6 +88,17 @@ export default function TimetableApp({
       */}
       {canEdit && (
         <div className="edit-switcher">
+          {editing && isAdmin && (
+            <button
+              type="button"
+              className="edit-fab"
+              aria-label="Accounts"
+              title="Accounts"
+              onClick={() => setUsersOpen(true)}
+            >
+              <i className="bi bi-people" aria-hidden="true" />
+            </button>
+          )}
           {editing && (
             <button
               type="button"
@@ -123,7 +139,7 @@ export default function TimetableApp({
         </div>
       )}
 
-      <AppHeader emptySeats={seats} />
+      <AppHeader emptySeats={seats} userName={userName} />
 
       {!data.seeded && (
         <p style={{ color: 'var(--text-dim)', fontSize: 13, margin: '8px 0' }}>
@@ -159,6 +175,10 @@ export default function TimetableApp({
 
       {settingsOpen && (
         <SettingsPanel store={store} role={role} onClose={() => setSettingsOpen(false)} />
+      )}
+
+      {usersOpen && isAdmin && (
+        <UsersPanel selfId={userId} onClose={() => setUsersOpen(false)} />
       )}
 
       <ConnectionBadge state={connection} remoteEditor={remoteEditor} />

@@ -27,6 +27,7 @@ export default async function Page() {
       preferredTheme={viewer.preferredTheme}
       role={viewer.role}
       userId={viewer.id}
+      userName={viewer.name}
     />
   );
 }
